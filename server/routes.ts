@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
+import { edgeTTSService } from "./edge-tts";
 import { insertAnnouncementSchema, insertChecklistSchema, insertNoteSchema, insertFlightStatusSchema, insertWeightBalanceSchema } from "@shared/schema";
 import { atc24Client } from "./atc24-client";
 import { EnhancedAircraft } from "@shared/atc24-types";
@@ -287,7 +288,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // TTS is now handled client-side using Web Speech API
+  // Microsoft Edge TTS routes - Free with natural voices
+  app.get("/api/voices", async (req, res) => {
+    try {
+      const voices = edgeTTSService.getVoices();
+      res.json(voices);
+    } catch (error) {
+      console.error('Failed to fetch voices:', error);
+      res.status(500).json({ message: "Failed to fetch voices from Edge TTS" });
+    }
+  });
+
+  app.post("/api/tts", async (req, res) => {
+    try {
+      const { text, voice_id, rate, pitch, volume } = req.body;
+      if (!text || !voice_id) {
+        return res.status(400).json({ message: "Text and voice_id are required" });
+      }
+
+      const audioBuffer = await edgeTTSService.generateSpeech({
+        text,
+        voice: voice_id,
+        rate: rate || "0%",
+        pitch: pitch || "0%",
+        volume: volume || "100%"
+      });
+
+      res.set({
+        'Content-Type': 'audio/mpeg',
+        'Content-Length': audioBuffer.length.toString(),
+      });
+      res.send(audioBuffer);
+    } catch (error) {
+      console.error('Failed to generate speech:', error);
+      res.status(500).json({ message: "Failed to generate speech" });
+    }
+  });
 
   // Weight and balance routes
   app.get("/api/weight-balance/:aircraftType", async (req, res) => {

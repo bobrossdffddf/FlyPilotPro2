@@ -124,7 +124,6 @@ export default function EnhancedAnnouncementsTab() {
   const { 
     voices, 
     isLoading, 
-    isSupported,
     currentAudio, 
     fetchVoices, 
     generateSpeech, 
@@ -175,16 +174,7 @@ export default function EnhancedAnnouncementsTab() {
     if (!voiceToUse) {
       toast({
         title: "Voice Not Available",
-        description: "Please ensure voices are loaded",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!isSupported) {
-      toast({
-        title: "TTS Not Supported",
-        description: "Your browser doesn't support text-to-speech",
+        description: "Please ensure natural voices are loaded",
         variant: "destructive"
       });
       return;
@@ -206,9 +196,9 @@ export default function EnhancedAnnouncementsTab() {
       await generateSpeech({
         text: textToSpeak,
         voice_id: voiceToUse.voice_id,
-        rate: 0.9, // Slightly slower for clarity
-        pitch: selectedAirline?.accent === "British" ? 1.1 : 1.0,
-        volume: 1.0
+        rate: "-10%", // Slightly slower for clarity
+        pitch: selectedAirline?.accent === "British" ? "+10%" : "0%",
+        volume: "100%"
       });
 
       toast({

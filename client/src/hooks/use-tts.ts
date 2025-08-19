@@ -1,180 +1,109 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useToast } from './use-toast';
 
 interface Voice {
   voice_id: string;
   name: string;
   category: string;
-  description?: string;
   lang: string;
+  gender: string;
+  quality: string;
 }
 
 interface GenerateSpeechOptions {
   text: string;
   voice_id: string;
-  rate?: number;
-  pitch?: number;
-  volume?: number;
-  lang?: string;
+  rate?: string;
+  pitch?: string;
+  volume?: string;
 }
 
 export function useTTS() {
   const [isLoading, setIsLoading] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);
-  const [currentUtterance, setCurrentUtterance] = useState<SpeechSynthesisUtterance | null>(null);
-  const [isSupported, setIsSupported] = useState(false);
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    setIsSupported('speechSynthesis' in window);
-    if ('speechSynthesis' in window) {
-      // Load voices when they become available
-      const loadVoices = () => {
-        const browserVoices = window.speechSynthesis.getVoices();
-        if (browserVoices.length > 0) {
-          fetchVoices();
-        }
-      };
-      
-      window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
-      loadVoices(); // Try loading immediately
-      
-      return () => {
-        window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
-      };
-    }
-  }, []);
-
   const fetchVoices = useCallback(async () => {
-    if (!isSupported) {
-      toast({
-        title: "TTS Not Supported",
-        description: "Your browser doesn't support text-to-speech",
-        variant: "destructive"
-      });
-      return [];
-    }
-
     try {
       setIsLoading(true);
-      const browserVoices = window.speechSynthesis.getVoices();
+      const response = await fetch('/api/voices');
+      if (!response.ok) throw new Error('Failed to fetch voices');
       
-      const voicesData: Voice[] = browserVoices.map((voice, index) => {
-        // Categorize voices based on language and name
-        let category = 'general';
-        const name = voice.name.toLowerCase();
-        
-        if (name.includes('male') || name.includes('man') || name.includes('guy')) {
-          category = 'male';
-        } else if (name.includes('female') || name.includes('woman') || name.includes('lady')) {
-          category = 'female';
-        } else if (name.includes('professional') || name.includes('business')) {
-          category = 'professional';
-        }
-        
-        return {
-          voice_id: `${voice.name}-${index}`,
-          name: voice.name,
-          category,
-          description: `${voice.lang} voice`,
-          lang: voice.lang
-        };
-      });
-      
+      const voicesData = await response.json();
       setVoices(voicesData);
       return voicesData;
     } catch (error) {
       console.error('Error fetching voices:', error);
       toast({
         title: "Error",
-        description: "Failed to load voice options",
+        description: "Failed to load natural voice options",
         variant: "destructive"
       });
       return [];
     } finally {
       setIsLoading(false);
     }
-  }, [toast, isSupported]);
+  }, [toast]);
 
   const generateSpeech = useCallback(async (options: GenerateSpeechOptions) => {
-    if (!isSupported) {
-      toast({
-        title: "TTS Not Supported",
-        description: "Your browser doesn't support text-to-speech",
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
       setIsLoading(true);
       
-      // Stop current speech if playing
-      if (currentUtterance) {
-        window.speechSynthesis.cancel();
-        setCurrentUtterance(null);
+      // Stop current audio if playing
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
       }
 
-      const utterance = new SpeechSynthesisUtterance(options.text);
-      
-      // Find the voice by voice_id
-      const browserVoices = window.speechSynthesis.getVoices();
-      const targetVoice = browserVoices.find((voice, index) => 
-        `${voice.name}-${index}` === options.voice_id
-      );
-      
-      if (targetVoice) {
-        utterance.voice = targetVoice;
-        utterance.lang = targetVoice.lang;
+      const response = await fetch('/api/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(options),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
       
-      // Set speech parameters
-      utterance.rate = options.rate || 0.9; // Slightly slower for clarity
-      utterance.pitch = options.pitch || 1.0;
-      utterance.volume = options.volume || 1.0;
+      setCurrentAudio(audio);
       
-      // Set up event handlers
-      utterance.onstart = () => {
-        setCurrentUtterance(utterance);
+      // Play the audio
+      await audio.play();
+      
+      // Clean up the URL when audio ends
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+        setCurrentAudio(null);
       };
-      
-      utterance.onend = () => {
-        setCurrentUtterance(null);
-      };
-      
-      utterance.onerror = (event) => {
-        console.error('Speech synthesis error:', event);
-        setCurrentUtterance(null);
-        toast({
-          title: "Speech Error",
-          description: "An error occurred during speech synthesis",
-          variant: "destructive"
-        });
-      };
-      
-      // Start speaking
-      window.speechSynthesis.speak(utterance);
-      
-      return { utterance };
+
+      return { audio, audioUrl };
     } catch (error) {
       console.error('Error generating speech:', error);
       toast({
         title: "Speech Generation Failed",
-        description: "Unable to generate speech. Please try again.",
+        description: "Unable to generate speech with natural voices.",
         variant: "destructive"
       });
       throw error;
     } finally {
       setIsLoading(false);
     }
-  }, [currentUtterance, toast, isSupported]);
+  }, [currentAudio, toast]);
 
   const stopSpeech = useCallback(() => {
-    if (currentUtterance && isSupported) {
-      window.speechSynthesis.cancel();
-      setCurrentUtterance(null);
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      setCurrentAudio(null);
     }
-  }, [currentUtterance, isSupported]);
+  }, [currentAudio]);
 
   // Professional aviation voices with fallbacks
   const getAviationVoices = useCallback(() => {
@@ -182,39 +111,24 @@ export function useTTS() {
     const englishVoices = voices.filter(v => v.lang.startsWith('en'));
     const allVoices = englishVoices.length > 0 ? englishVoices : voices;
     
-    const maleVoices = allVoices.filter(v => 
-      v.category === 'male' || 
-      v.name.toLowerCase().includes('male') || 
-      v.name.toLowerCase().includes('man') ||
-      v.name.toLowerCase().includes('guy')
-    );
-    
-    const femaleVoices = allVoices.filter(v => 
-      v.category === 'female' || 
-      v.name.toLowerCase().includes('female') || 
-      v.name.toLowerCase().includes('woman') ||
-      v.name.toLowerCase().includes('lady')
-    );
-    
-    const professionalVoices = allVoices.filter(v => 
-      v.category === 'professional' ||
-      v.name.toLowerCase().includes('professional') ||
-      v.name.toLowerCase().includes('business')
-    );
+    const maleVoices = allVoices.filter(v => v.gender === 'male');
+    const femaleVoices = allVoices.filter(v => v.gender === 'female');
+    const captainVoices = allVoices.filter(v => v.category === 'captain');
+    const attendantVoices = allVoices.filter(v => v.category === 'attendant');
+    const professionalVoices = allVoices.filter(v => v.category === 'professional');
 
     return {
-      captain: professionalVoices.find(v => maleVoices.includes(v)) || maleVoices[0] || allVoices[0],
-      attendant: professionalVoices.find(v => femaleVoices.includes(v)) || femaleVoices[0] || allVoices[1] || allVoices[0],
-      copilot: maleVoices[1] || maleVoices[0] || allVoices[2] || allVoices[0],
-      crew: professionalVoices[0] || allVoices[0]
+      captain: captainVoices.find(v => v.gender === 'male') || maleVoices[0] || allVoices[0],
+      attendant: attendantVoices.find(v => v.gender === 'female') || femaleVoices[0] || allVoices[1] || allVoices[0],
+      copilot: captainVoices.find(v => v.gender === 'male' && v.lang === 'en-GB') || maleVoices[1] || maleVoices[0] || allVoices[0],
+      crew: professionalVoices.find(v => v.gender === 'female') || femaleVoices[0] || allVoices[0]
     };
   }, [voices]);
 
   return {
     voices,
     isLoading,
-    isSupported,
-    currentAudio: !!currentUtterance,
+    currentAudio: !!currentAudio,
     fetchVoices,
     generateSpeech,
     stopSpeech,
