@@ -23,104 +23,104 @@ interface Checklist {
   description: string;
 }
 
-// Authentic PTFS Aircraft Checklists based on real procedures
+// PTFS-Specific Aircraft Checklists for ATC 24 Operations
 const aircraftChecklists: Checklist[] = [
   // Boeing 737-800 (PTFS)
   {
     id: "b737-preflight",
-    name: "Pre-flight Inspection",
+    name: "Cold & Dark Startup",
     aircraft: "Boeing 737-800",
     category: "preflight",
-    description: "Cold & Dark to Ready for Start",
+    description: "PTFS Boeing 737 startup procedure",
     items: [
-      { id: "1", action: "Battery Switch", response: "ON", completed: false },
-      { id: "2", action: "External Power", response: "CONNECT & AVAILABLE", completed: false },
-      { id: "3", action: "APU Master Switch", response: "ON", completed: false },
-      { id: "4", action: "APU Start", response: "START", completed: false },
-      { id: "5", action: "APU Generator", response: "ON", completed: false },
-      { id: "6", action: "Navigation Lights", response: "ON", completed: false },
-      { id: "7", action: "Fuel Pumps", response: "ON (ALL)", completed: false },
-      { id: "8", action: "IRS Mode Selectors", response: "NAV", completed: false },
-      { id: "9", action: "Flight Management Computer", response: "PROGRAMMED", completed: false },
-      { id: "10", action: "Transponder", response: "SET SQUAWK", completed: false }
+      { id: "1", action: "Spawn at gate", response: "CONFIRMED", completed: false },
+      { id: "2", action: "Connect to ATC 24", response: "ONLINE", completed: false },
+      { id: "3", action: "Battery", response: "ON", completed: false },
+      { id: "4", action: "APU", response: "START", completed: false },
+      { id: "5", action: "Navigation Lights", response: "ON", completed: false },
+      { id: "6", action: "Beacon", response: "ON", completed: false },
+      { id: "7", action: "Request IFR Clearance", response: "RECEIVED", completed: false },
+      { id: "8", action: "Set Transponder", response: "ASSIGNED CODE", completed: false },
+      { id: "9", action: "Load Flight Plan", response: "COMPLETE", completed: false },
+      { id: "10", action: "Passenger Announcement", response: "BOARDING", completed: false }
     ]
   },
   {
     id: "b737-startup",
-    name: "Engine Start",
+    name: "Engine Start & Taxi",
     aircraft: "Boeing 737-800", 
     category: "startup",
-    description: "Engine startup procedure",
+    description: "PTFS engine start and taxi preparation",
     items: [
-      { id: "1", action: "Beacon Light", response: "ON", completed: false },
-      { id: "2", action: "Engine Start Switch (Right)", response: "GRD", completed: false },
-      { id: "3", action: "N2 Rotation", response: "VERIFY", completed: false },
-      { id: "4", action: "Fuel Control Switch (Right)", response: "RUN", completed: false },
-      { id: "5", action: "Engine Parameters", response: "CHECK GREEN", completed: false },
-      { id: "6", action: "Engine Start Switch (Left)", response: "GRD", completed: false },
-      { id: "7", action: "Fuel Control Switch (Left)", response: "RUN", completed: false },
-      { id: "8", action: "Both Engines", response: "STABLE IDLE", completed: false },
-      { id: "9", action: "Engine Start Switches", response: "OFF", completed: false },
-      { id: "10", action: "APU Bleed", response: "OFF", completed: false }
+      { id: "1", action: "Pushback clearance", response: "APPROVED", completed: false },
+      { id: "2", action: "Engine 1 start", response: "STARTED", completed: false },
+      { id: "3", action: "Engine 2 start", response: "STARTED", completed: false },
+      { id: "4", action: "Engine parameters", response: "NORMAL", completed: false },
+      { id: "5", action: "APU shutdown", response: "OFF", completed: false },
+      { id: "6", action: "Request taxi clearance", response: "RECEIVED", completed: false },
+      { id: "7", action: "Taxi lights", response: "ON", completed: false },
+      { id: "8", action: "Flaps", response: "SET FOR TAKEOFF", completed: false },
+      { id: "9", action: "Flight controls", response: "CHECKED", completed: false },
+      { id: "10", action: "Cabin crew notification", response: "COMPLETE", completed: false }
     ]
   },
   // Airbus A320 (PTFS)
   {
     id: "a320-preflight",
-    name: "Pre-flight Setup",
+    name: "PTFS A320 Setup",
     aircraft: "Airbus A320",
     category: "preflight", 
-    description: "Cold & Dark to Ready",
+    description: "PTFS Airbus A320 game setup procedure",
     items: [
-      { id: "1", action: "Battery 1 & 2", response: "ON", completed: false },
-      { id: "2", action: "External Power", response: "ON", completed: false },
-      { id: "3", action: "APU Master", response: "ON", completed: false },
-      { id: "4", action: "APU Start", response: "ON", completed: false },
-      { id: "5", action: "APU Bleed", response: "ON", completed: false },
-      { id: "6", action: "ADIRS 1, 2, 3", response: "NAV", completed: false },
-      { id: "7", action: "Nav & Strobe Lights", response: "ON", completed: false },
-      { id: "8", action: "MCDU Setup", response: "COMPLETE", completed: false },
-      { id: "9", action: "Fuel Quantity", response: "CHECK", completed: false },
-      { id: "10", action: "Flight Controls", response: "CHECK", completed: false }
+      { id: "1", action: "Select A320 aircraft", response: "SELECTED", completed: false },
+      { id: "2", action: "Join ATC 24 server", response: "CONNECTED", completed: false },
+      { id: "3", action: "Choose departure airport", response: "SET", completed: false },
+      { id: "4", action: "Load flight plan", response: "PROGRAMMED", completed: false },
+      { id: "5", action: "Set fuel quantity", response: "LOADED", completed: false },
+      { id: "6", action: "Configure passengers", response: "BOARDED", completed: false },
+      { id: "7", action: "Request startup clearance", response: "APPROVED", completed: false },
+      { id: "8", action: "Set transponder code", response: "SQUAWKING", completed: false },
+      { id: "9", action: "Complete pre-flight check", response: "VERIFIED", completed: false },
+      { id: "10", action: "Ready for pushback", response: "CONFIRMED", completed: false }
     ]
   },
-  // Cessna 172 (General Aviation)
+  // Cessna 172 (Training Aircraft - PTFS)
   {
     id: "c172-preflight",
-    name: "Pre-flight Inspection",
+    name: "PTFS Training Flight Setup",
     aircraft: "Cessna 172",
     category: "preflight",
-    description: "Visual inspection and cabin setup",
+    description: "Basic training aircraft preparation for PTFS",
     items: [
-      { id: "1", action: "Pilot's Operating Handbook", response: "ABOARD", completed: false },
-      { id: "2", action: "Weight & Balance", response: "CHECKED", completed: false },
-      { id: "3", action: "Control Wheel Lock", response: "REMOVE", completed: false },
-      { id: "4", action: "Ignition Switch", response: "OFF", completed: false },
-      { id: "5", action: "Master Switch", response: "ON", completed: false },
-      { id: "6", action: "Fuel Quantity Indicators", response: "CHECK", completed: false },
-      { id: "7", action: "Navigation Lights", response: "ON", completed: false },
-      { id: "8", action: "Beacon Light", response: "ON", completed: false },
-      { id: "9", action: "Landing Light", response: "ON", completed: false },
-      { id: "10", action: "Flaps", response: "EXTEND & CHECK", completed: false }
+      { id: "1", action: "Select C172 in PTFS", response: "SELECTED", completed: false },
+      { id: "2", action: "Choose training airport", response: "SET", completed: false },
+      { id: "3", action: "Set fuel to 100%", response: "LOADED", completed: false },
+      { id: "4", action: "Configure basic flight plan", response: "PROGRAMMED", completed: false },
+      { id: "5", action: "Join ATC 24 as student", response: "CONNECTED", completed: false },
+      { id: "6", action: "Request taxi clearance", response: "APPROVED", completed: false },
+      { id: "7", action: "Practice radio calls", response: "ACKNOWLEDGED", completed: false },
+      { id: "8", action: "Complete pattern work", response: "IN PROGRESS", completed: false },
+      { id: "9", action: "Emergency procedures ready", response: "BRIEFED", completed: false },
+      { id: "10", action: "Instructor contact", response: "ESTABLISHED", completed: false }
     ]
   },
   {
     id: "c172-startup",
-    name: "Engine Start",
+    name: "PTFS Training Flight",
     aircraft: "Cessna 172",
     category: "startup",
-    description: "Engine startup for C172",
+    description: "Pattern work and training procedures",
     items: [
-      { id: "1", action: "Mixture", response: "RICH", completed: false },
-      { id: "2", action: "Carburetor Heat", response: "COLD", completed: false },
-      { id: "3", action: "Propeller Area", response: "CLEAR", completed: false },
-      { id: "4", action: "Master Switch", response: "ON", completed: false },
-      { id: "5", action: "Beacon Light", response: "ON", completed: false },
-      { id: "6", action: "Fuel Shutoff Valve", response: "ON", completed: false },
-      { id: "7", action: "Ignition Switch", response: "START", completed: false },
-      { id: "8", action: "Oil Pressure", response: "CHECK", completed: false },
-      { id: "9", action: "Radios", response: "ON", completed: false },
-      { id: "10", action: "Transponder", response: "1200/ALT", completed: false }
+      { id: "1", action: "Engine startup procedure", response: "COMPLETE", completed: false },
+      { id: "2", action: "Contact ground control", response: "ESTABLISHED", completed: false },
+      { id: "3", action: "Taxi to active runway", response: "APPROVED", completed: false },
+      { id: "4", action: "Pre-takeoff checklist", response: "COMPLETE", completed: false },
+      { id: "5", action: "Request takeoff clearance", response: "CLEARED", completed: false },
+      { id: "6", action: "Pattern entry", response: "STANDARD", completed: false },
+      { id: "7", action: "Practice maneuvers", response: "COMPLETE", completed: false },
+      { id: "8", action: "Landing approach", response: "STABLE", completed: false },
+      { id: "9", action: "Touch and go", response: "EXECUTED", completed: false },
+      { id: "10", action: "End flight procedures", response: "COMPLETE", completed: false }
     ]
   },
   // Emergency Checklists

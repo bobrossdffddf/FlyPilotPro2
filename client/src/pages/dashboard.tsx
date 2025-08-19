@@ -8,9 +8,11 @@ import ChartsTab from "@/components/tabs/charts-tab";
 import SidsTab from "@/components/tabs/sids-tab";
 import NotepadTab from "@/components/tabs/notepad-tab";
 import ChecklistsTab from "@/components/tabs/checklists-tab";
+import WeightBalanceTab from "@/components/tabs/weight-balance-tab";
+import VirtualMicTab from "@/components/tabs/virtual-mic-tab";
 import FlightHeader from "@/components/layout/flight-header";
 
-type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists";
+type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | "weight" | "virtuemic";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("announcements");
@@ -46,6 +48,10 @@ export default function Dashboard() {
         return <NotepadTab />;
       case "checklists":
         return <ChecklistsTab />;
+      case "weight":
+        return <WeightBalanceTab />;
+      case "virtuemic":
+        return <VirtualMicTab />;
       default:
         return <AnnouncementsTab />;
     }

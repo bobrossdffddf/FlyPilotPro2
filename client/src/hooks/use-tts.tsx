@@ -53,14 +53,18 @@ export function useTTS() {
         utterance.voice = selectedVoice;
       }
     } else {
-      // Auto-select a good voice for aviation announcements
-      const preferredVoice = voices.find(voice => 
-        voice.lang.startsWith('en') && 
-        (voice.name.includes('Daniel') || voice.name.includes('Alex') || voice.name.includes('Karen'))
-      ) || voices.find(voice => voice.lang.startsWith('en'));
+      // Prefer professional/aviation-style voices
+      const preferredVoices = voices.filter(voice => {
+        const name = voice.name.toLowerCase();
+        return name.includes('male') || 
+               name.includes('daniel') || 
+               name.includes('alex') ||
+               name.includes('google uk english male') ||
+               voice.lang.startsWith('en-');
+      });
       
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
+      if (preferredVoices.length > 0) {
+        utterance.voice = preferredVoices[0];
       }
     }
 

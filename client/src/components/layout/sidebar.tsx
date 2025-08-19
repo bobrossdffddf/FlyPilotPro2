@@ -3,7 +3,7 @@ import { FlightStatus } from "@shared/schema";
 import { EnhancedAircraft } from "@shared/atc24-types";
 import { queryClient } from "@/lib/queryClient";
 
-type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists";
+type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | "weight" | "virtuemic";
 
 interface SidebarProps {
   activeTab: TabType;
@@ -41,6 +41,16 @@ export default function Sidebar({ activeTab, onTabChange, selectedAircraft }: Si
       id: "checklists" as TabType,
       label: "Checklists",
       icon: "fas fa-clipboard-check",
+    },
+    {
+      id: "weight" as TabType,
+      label: "Weight & Balance",
+      icon: "fas fa-balance-scale",
+    },
+    {
+      id: "virtuemic" as TabType,
+      label: "Virtual Mic",
+      icon: "fas fa-microphone",
     },
   ];
 
