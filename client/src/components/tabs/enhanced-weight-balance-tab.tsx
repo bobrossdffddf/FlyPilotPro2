@@ -48,25 +48,35 @@ const aircraftSpecs: Record<string, WeightBalanceData> = {
     avgPassengerWeight: 84,
     cargoBayCapacity: 4440
   },
-  "Boeing 737": {
-    aircraftType: "Boeing 737",
-    maxTakeoffWeight: 79000,
-    maxLandingWeight: 66000,
-    emptyWeight: 41500,
-    maxFuelCapacity: 6875,
-    maxPassengers: 189,
+  "Airbus A330": {
+    aircraftType: "Airbus A330",
+    maxTakeoffWeight: 242000,
+    maxLandingWeight: 187000,
+    emptyWeight: 124500,
+    maxFuelCapacity: 36740,
+    maxPassengers: 440,
     avgPassengerWeight: 84,
-    cargoBayCapacity: 4440
+    cargoBayCapacity: 8500
   },
-  "Boeing 777": {
-    aircraftType: "Boeing 777",
-    maxTakeoffWeight: 347800,
-    maxLandingWeight: 267600,
-    emptyWeight: 166900,
-    maxFuelCapacity: 47890,
-    maxPassengers: 396,
+  "Airbus A340": {
+    aircraftType: "Airbus A340",
+    maxTakeoffWeight: 380000,
+    maxLandingWeight: 265000,
+    emptyWeight: 178000,
+    maxFuelCapacity: 53040,
+    maxPassengers: 440,
     avgPassengerWeight: 84,
-    cargoBayCapacity: 11260
+    cargoBayCapacity: 9200
+  },
+  "Airbus A350": {
+    aircraftType: "Airbus A350",
+    maxTakeoffWeight: 316000,
+    maxLandingWeight: 233000,
+    emptyWeight: 142400,
+    maxFuelCapacity: 42400,
+    maxPassengers: 440,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 9800
   },
   "Airbus A380": {
     aircraftType: "Airbus A380",
@@ -78,6 +88,96 @@ const aircraftSpecs: Record<string, WeightBalanceData> = {
     avgPassengerWeight: 84,
     cargoBayCapacity: 16450
   },
+  "Boeing 737": {
+    aircraftType: "Boeing 737",
+    maxTakeoffWeight: 79000,
+    maxLandingWeight: 66000,
+    emptyWeight: 41500,
+    maxFuelCapacity: 6875,
+    maxPassengers: 189,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 4440
+  },
+  "Boeing 737 MAX": {
+    aircraftType: "Boeing 737 MAX",
+    maxTakeoffWeight: 82200,
+    maxLandingWeight: 67100,
+    emptyWeight: 45200,
+    maxFuelCapacity: 7500,
+    maxPassengers: 230,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 4500
+  },
+  "Boeing 747": {
+    aircraftType: "Boeing 747",
+    maxTakeoffWeight: 412780,
+    maxLandingWeight: 295740,
+    emptyWeight: 183500,
+    maxFuelCapacity: 57285,
+    maxPassengers: 660,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 12600
+  },
+  "Boeing 757": {
+    aircraftType: "Boeing 757",
+    maxTakeoffWeight: 115660,
+    maxLandingWeight: 99790,
+    emptyWeight: 58390,
+    maxFuelCapacity: 11490,
+    maxPassengers: 280,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 5800
+  },
+  "Boeing 767": {
+    aircraftType: "Boeing 767",
+    maxTakeoffWeight: 186880,
+    maxLandingWeight: 142880,
+    emptyWeight: 86070,
+    maxFuelCapacity: 24140,
+    maxPassengers: 350,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 7200
+  },
+  "Boeing 777": {
+    aircraftType: "Boeing 777",
+    maxTakeoffWeight: 347800,
+    maxLandingWeight: 267600,
+    emptyWeight: 166900,
+    maxFuelCapacity: 47890,
+    maxPassengers: 396,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 11260
+  },
+  "Boeing 777X": {
+    aircraftType: "Boeing 777X",
+    maxTakeoffWeight: 351500,
+    maxLandingWeight: 253000,
+    emptyWeight: 161000,
+    maxFuelCapacity: 52300,
+    maxPassengers: 426,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 12800
+  },
+  "Boeing 787": {
+    aircraftType: "Boeing 787",
+    maxTakeoffWeight: 254000,
+    maxLandingWeight: 181000,
+    emptyWeight: 120000,
+    maxFuelCapacity: 33340,
+    maxPassengers: 330,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 8200
+  },
+  "ATR-72": {
+    aircraftType: "ATR-72",
+    maxTakeoffWeight: 23000,
+    maxLandingWeight: 22500,
+    emptyWeight: 13500,
+    maxFuelCapacity: 2040,
+    maxPassengers: 78,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 800
+  },
   "Cessna 172": {
     aircraftType: "Cessna 172",
     maxTakeoffWeight: 1157,
@@ -87,6 +187,66 @@ const aircraftSpecs: Record<string, WeightBalanceData> = {
     maxPassengers: 4,
     avgPassengerWeight: 77,
     cargoBayCapacity: 54
+  },
+  "Cessna 182": {
+    aircraftType: "Cessna 182",
+    maxTakeoffWeight: 1406,
+    maxLandingWeight: 1406,
+    emptyWeight: 895,
+    maxFuelCapacity: 315,
+    maxPassengers: 4,
+    avgPassengerWeight: 77,
+    cargoBayCapacity: 120
+  },
+  "Cessna Citation": {
+    aircraftType: "Cessna Citation",
+    maxTakeoffWeight: 7700,
+    maxLandingWeight: 6800,
+    emptyWeight: 4400,
+    maxFuelCapacity: 1560,
+    maxPassengers: 10,
+    avgPassengerWeight: 77,
+    cargoBayCapacity: 350
+  },
+  "Piper Cherokee": {
+    aircraftType: "Piper Cherokee",
+    maxTakeoffWeight: 1225,
+    maxLandingWeight: 1225,
+    emptyWeight: 680,
+    maxFuelCapacity: 227,
+    maxPassengers: 4,
+    avgPassengerWeight: 77,
+    cargoBayCapacity: 90
+  },
+  "Bombardier CRJ": {
+    aircraftType: "Bombardier CRJ",
+    maxTakeoffWeight: 21520,
+    maxLandingWeight: 19050,
+    emptyWeight: 12020,
+    maxFuelCapacity: 2200,
+    maxPassengers: 100,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 1200
+  },
+  "Embraer E-Jet": {
+    aircraftType: "Embraer E-Jet",
+    maxTakeoffWeight: 37200,
+    maxLandingWeight: 33100,
+    emptyWeight: 21200,
+    maxFuelCapacity: 3830,
+    maxPassengers: 124,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 1800
+  },
+  "Concorde": {
+    aircraftType: "Concorde",
+    maxTakeoffWeight: 185070,
+    maxLandingWeight: 111130,
+    emptyWeight: 78700,
+    maxFuelCapacity: 26400,
+    maxPassengers: 128,
+    avgPassengerWeight: 84,
+    cargoBayCapacity: 1200
   }
 };
 

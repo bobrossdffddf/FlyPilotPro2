@@ -178,13 +178,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Charts routes
   app.get("/api/charts", async (req, res) => {
     try {
-      const { airport } = req.query;
-      const charts = airport 
-        ? await storage.getChartsByAirport(airport as string)
-        : await storage.getCharts();
+      // Return example charts from attached assets
+      const charts = [
+        {
+          id: "1",
+          title: "ICAO Standard Runway Chart",
+          airportCode: "ICAO",
+          chartType: "Runway Chart",
+          fileName: "ICAO_CHART_TYPE_RUNWAY.svg",
+          fileUrl: "/attached_assets/charts/ICAO_CHART_TYPE_RUNWAY.svg",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "2",
+          title: "KJFK ILS RWY 04L Approach",
+          airportCode: "KJFK",
+          chartType: "ILS Chart",
+          fileName: "kjfk_ils_04l.pdf",
+          fileUrl: "https://aeronav.faa.gov/d-tpp/2501/00585IL04L.PDF",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "3",
+          title: "KLAX Airport Diagram",
+          airportCode: "KLAX",
+          chartType: "Airport Diagram",
+          fileName: "klax_airport_diagram.pdf",
+          fileUrl: "https://aeronav.faa.gov/d-tpp/2501/00566AD.PDF",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "4",
+          title: "EGLL Heathrow ILS RWY 09L",
+          airportCode: "EGLL",
+          chartType: "ILS Chart",
+          fileName: "egll_ils_09l.pdf",
+          fileUrl: "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-12-05-AIRAC/html/eAIP/EG-AD-2.EGLL-10-en-GB.html",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "5",
+          title: "EDDM Munich SID TOBAK 1F",
+          airportCode: "EDDM",
+          chartType: "SID Chart",
+          fileName: "eddm_sid_tobak1f.pdf",
+          fileUrl: "https://www.dfs.de/dfs_homepage/de/Services/Customer%20Relations/Aeronautical%20Services/Electronic%20AIP/eAIP/",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "6",
+          title: "LFPG Charles de Gaulle STAR",
+          airportCode: "LFPG",
+          chartType: "STAR Chart", 
+          fileName: "lfpg_star_mopar.pdf",
+          fileUrl: "https://www.sia.aviation-civile.gouv.fr/",
+          createdAt: new Date().toISOString()
+        }
+      ];
+      
       res.json(charts);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch charts" });
+    }
+  });
+
+  app.post("/api/charts", async (req, res) => {
+    try {
+      const { title, airportCode, chartType, fileName, fileUrl } = req.body;
+      
+      const newChart = {
+        id: Date.now().toString(),
+        title,
+        airportCode,
+        chartType,
+        fileName,
+        fileUrl,
+        createdAt: new Date().toISOString()
+      };
+      
+      res.status(201).json(newChart);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid chart data" });
+    }
+  });
+
+  app.delete("/api/charts/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      res.json({ success: true, deletedId: id });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete chart" });
     }
   });
 

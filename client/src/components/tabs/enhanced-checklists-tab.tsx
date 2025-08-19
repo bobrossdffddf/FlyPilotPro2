@@ -41,6 +41,7 @@ interface Checklist {
 }
 
 const professionalChecklists: Checklist[] = [
+  // Airbus A320 Family
   {
     id: "a320-preflight",
     title: "Pre-flight Inspection",
@@ -77,38 +78,81 @@ const professionalChecklists: Checklist[] = [
     totalCount: 5
   },
   {
-    id: "b737-preflight",
-    title: "Pre-flight Inspection", 
-    phase: "preflight",
-    aircraftType: "Boeing 737",
-    estimatedTime: "12 min",
+    id: "a320-takeoff",
+    title: "Takeoff Checklist",
+    phase: "takeoff",
+    aircraftType: "Airbus A320",
+    estimatedTime: "2 min",
     mandatory: true,
     items: [
-      { id: "1", text: "Aircraft logbook - REVIEWED", completed: false, critical: true },
-      { id: "2", text: "MEL/CDL items - CHECKED", completed: false },
-      { id: "3", text: "Flight management computer - PROGRAMMED", completed: false },
-      { id: "4", text: "Walk-around inspection - COMPLETED", completed: false, critical: true },
-      { id: "5", text: "Fuel load - VERIFIED", completed: false, critical: true }
+      { id: "1", text: "V1, VR, V2 - SET", completed: false, critical: true },
+      { id: "2", text: "Flaps - SET FOR TAKEOFF", completed: false, critical: true },
+      { id: "3", text: "Flight controls - CHECKED", completed: false, critical: true },
+      { id: "4", text: "Transponder - TA/RA", completed: false },
+      { id: "5", text: "Takeoff clearance - RECEIVED", completed: false, critical: true }
     ],
     completedCount: 0,
     totalCount: 5
   },
   {
-    id: "b777-cruise",
-    title: "Cruise Checklist",
-    phase: "cruise", 
-    aircraftType: "Boeing 777",
+    id: "a320-landing",
+    title: "Landing Checklist",
+    phase: "landing",
+    aircraftType: "Airbus A320",
     estimatedTime: "3 min",
-    mandatory: false,
+    mandatory: true,
     items: [
-      { id: "1", text: "Altitude - SET", completed: false },
-      { id: "2", text: "Autopilot - ENGAGED", completed: false },
-      { id: "3", text: "Engine parameters - MONITOR", completed: false },
-      { id: "4", text: "Fuel flow - MONITOR", completed: false },
-      { id: "5", text: "Navigation - MONITOR", completed: false }
+      { id: "1", text: "Landing gear - DOWN", completed: false, critical: true },
+      { id: "2", text: "Flaps - FULL", completed: false, critical: true },
+      { id: "3", text: "Speed brakes - ARMED", completed: false },
+      { id: "4", text: "Autobrakes - SET", completed: false },
+      { id: "5", text: "Landing clearance - RECEIVED", completed: false, critical: true }
     ],
     completedCount: 0,
     totalCount: 5
+  },
+
+  // Airbus A330
+  {
+    id: "a330-preflight",
+    title: "Pre-flight Inspection",
+    phase: "preflight",
+    aircraftType: "Airbus A330",
+    estimatedTime: "20 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Aircraft documents - CHECK", completed: false, critical: true },
+      { id: "2", text: "Flight plan and weather - REVIEWED", completed: false, critical: true },
+      { id: "3", text: "FMGC flight plan - ENTERED", completed: false },
+      { id: "4", text: "External inspection - COMPLETED", completed: false, critical: true },
+      { id: "5", text: "Fuel quantity - VERIFIED", completed: false, critical: true },
+      { id: "6", text: "Weight and balance - CALCULATED", completed: false, critical: true },
+      { id: "7", text: "ETOPS check - COMPLETED", completed: false }
+    ],
+    completedCount: 0,
+    totalCount: 7
+  },
+
+  // Airbus A380
+  {
+    id: "a380-preflight",
+    title: "Pre-flight Inspection",
+    phase: "preflight",
+    aircraftType: "Airbus A380",
+    estimatedTime: "30 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Aircraft documents - CHECK", completed: false, critical: true },
+      { id: "2", text: "Flight plan and weather - REVIEWED", completed: false, critical: true },
+      { id: "3", text: "FMGC flight plan - ENTERED", completed: false },
+      { id: "4", text: "External inspection - COMPLETED", completed: false, critical: true },
+      { id: "5", text: "Fuel quantity (4 tanks) - VERIFIED", completed: false, critical: true },
+      { id: "6", text: "Weight and balance - CALCULATED", completed: false, critical: true },
+      { id: "7", text: "Upper deck configuration - CHECK", completed: false },
+      { id: "8", text: "Lower deck cargo - SECURED", completed: false }
+    ],
+    completedCount: 0,
+    totalCount: 8
   },
   {
     id: "a380-landing",
@@ -127,6 +171,220 @@ const professionalChecklists: Checklist[] = [
     ],
     completedCount: 0,
     totalCount: 6
+  },
+
+  // Boeing 737 Family
+  {
+    id: "b737-preflight",
+    title: "Pre-flight Inspection", 
+    phase: "preflight",
+    aircraftType: "Boeing 737",
+    estimatedTime: "12 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Aircraft logbook - REVIEWED", completed: false, critical: true },
+      { id: "2", text: "MEL/CDL items - CHECKED", completed: false },
+      { id: "3", text: "Flight management computer - PROGRAMMED", completed: false },
+      { id: "4", text: "Walk-around inspection - COMPLETED", completed: false, critical: true },
+      { id: "5", text: "Fuel load - VERIFIED", completed: false, critical: true }
+    ],
+    completedCount: 0,
+    totalCount: 5
+  },
+  {
+    id: "b737-startup",
+    title: "Engine Start",
+    phase: "startup",
+    aircraftType: "Boeing 737",
+    estimatedTime: "6 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Beacon - ON", completed: false, critical: true },
+      { id: "2", text: "APU - START", completed: false },
+      { id: "3", text: "Engine start switches - START", completed: false, critical: true },
+      { id: "4", text: "Engine parameters - NORMAL", completed: false, critical: true },
+      { id: "5", text: "Hydraulic systems - CHECK", completed: false }
+    ],
+    completedCount: 0,
+    totalCount: 5
+  },
+
+  // Boeing 747
+  {
+    id: "b747-preflight",
+    title: "Pre-flight Inspection",
+    phase: "preflight",
+    aircraftType: "Boeing 747",
+    estimatedTime: "25 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Aircraft documents - CHECK", completed: false, critical: true },
+      { id: "2", text: "Flight plan and weather - REVIEWED", completed: false, critical: true },
+      { id: "3", text: "FMC flight plan - ENTERED", completed: false },
+      { id: "4", text: "External inspection (4 engines) - COMPLETED", completed: false, critical: true },
+      { id: "5", text: "Fuel quantity (4 tanks) - VERIFIED", completed: false, critical: true },
+      { id: "6", text: "Weight and balance - CALCULATED", completed: false, critical: true },
+      { id: "7", text: "Upper deck configuration - CHECK", completed: false }
+    ],
+    completedCount: 0,
+    totalCount: 7
+  },
+
+  // Boeing 777
+  {
+    id: "b777-preflight",
+    title: "Pre-flight Inspection",
+    phase: "preflight",
+    aircraftType: "Boeing 777",
+    estimatedTime: "18 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Aircraft documents - CHECK", completed: false, critical: true },
+      { id: "2", text: "Flight plan and weather - REVIEWED", completed: false, critical: true },
+      { id: "3", text: "FMC flight plan - ENTERED", completed: false },
+      { id: "4", text: "External inspection - COMPLETED", completed: false, critical: true },
+      { id: "5", text: "Fuel quantity - VERIFIED", completed: false, critical: true },
+      { id: "6", text: "Weight and balance - CALCULATED", completed: false, critical: true },
+      { id: "7", text: "ETOPS check - COMPLETED", completed: false }
+    ],
+    completedCount: 0,
+    totalCount: 7
+  },
+  {
+    id: "b777-cruise",
+    title: "Cruise Checklist",
+    phase: "cruise", 
+    aircraftType: "Boeing 777",
+    estimatedTime: "3 min",
+    mandatory: false,
+    items: [
+      { id: "1", text: "Altitude - SET", completed: false },
+      { id: "2", text: "Autopilot - ENGAGED", completed: false },
+      { id: "3", text: "Engine parameters - MONITOR", completed: false },
+      { id: "4", text: "Fuel flow - MONITOR", completed: false },
+      { id: "5", text: "Navigation - MONITOR", completed: false }
+    ],
+    completedCount: 0,
+    totalCount: 5
+  },
+
+  // Boeing 787
+  {
+    id: "b787-preflight",
+    title: "Pre-flight Inspection",
+    phase: "preflight",
+    aircraftType: "Boeing 787",
+    estimatedTime: "20 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Aircraft documents - CHECK", completed: false, critical: true },
+      { id: "2", text: "Flight plan and weather - REVIEWED", completed: false, critical: true },
+      { id: "3", text: "FMC flight plan - ENTERED", completed: false },
+      { id: "4", text: "External inspection - COMPLETED", completed: false, critical: true },
+      { id: "5", text: "Fuel quantity - VERIFIED", completed: false, critical: true },
+      { id: "6", text: "Weight and balance - CALCULATED", completed: false, critical: true },
+      { id: "7", text: "Dreamliner systems - CHECK", completed: false }
+    ],
+    completedCount: 0,
+    totalCount: 7
+  },
+
+  // ATR-72
+  {
+    id: "atr72-preflight",
+    title: "Pre-flight Inspection",
+    phase: "preflight",
+    aircraftType: "ATR-72",
+    estimatedTime: "10 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Aircraft documents - CHECK", completed: false, critical: true },
+      { id: "2", text: "Flight plan and weather - REVIEWED", completed: false, critical: true },
+      { id: "3", text: "External inspection (props) - COMPLETED", completed: false, critical: true },
+      { id: "4", text: "Fuel quantity - VERIFIED", completed: false, critical: true },
+      { id: "5", text: "Weight and balance - CALCULATED", completed: false, critical: true },
+      { id: "6", text: "Propeller systems - CHECK", completed: false }
+    ],
+    completedCount: 0,
+    totalCount: 6
+  },
+
+  // Cessna 172
+  {
+    id: "c172-preflight",
+    title: "Pre-flight Inspection",
+    phase: "preflight",
+    aircraftType: "Cessna 172",
+    estimatedTime: "8 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Aircraft documents - CHECK", completed: false, critical: true },
+      { id: "2", text: "Flight plan - REVIEWED", completed: false },
+      { id: "3", text: "External inspection - COMPLETED", completed: false, critical: true },
+      { id: "4", text: "Fuel quantity - VERIFIED", completed: false, critical: true },
+      { id: "5", text: "Weight and balance - CALCULATED", completed: false, critical: true },
+      { id: "6", text: "Control surfaces - FREE AND CORRECT", completed: false, critical: true }
+    ],
+    completedCount: 0,
+    totalCount: 6
+  },
+  {
+    id: "c172-startup",
+    title: "Engine Start",
+    phase: "startup",
+    aircraftType: "Cessna 172",
+    estimatedTime: "3 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Beacon - ON", completed: false, critical: true },
+      { id: "2", text: "Mixture - RICH", completed: false, critical: true },
+      { id: "3", text: "Propeller - HIGH RPM", completed: false },
+      { id: "4", text: "Engine - START", completed: false, critical: true },
+      { id: "5", text: "Oil pressure - CHECK", completed: false, critical: true }
+    ],
+    completedCount: 0,
+    totalCount: 5
+  },
+
+  // Emergency Checklists
+  {
+    id: "emergency-engine-failure",
+    title: "Engine Failure",
+    phase: "emergency",
+    aircraftType: "Boeing 737",
+    estimatedTime: "5 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Airspeed - MAINTAIN", completed: false, critical: true },
+      { id: "2", text: "Engine fire switch - PULL", completed: false, critical: true },
+      { id: "3", text: "Engine fire extinguisher - DISCHARGE", completed: false, critical: true },
+      { id: "4", text: "Autopilot - DISENGAGE", completed: false },
+      { id: "5", text: "Nearest airport - IDENTIFY", completed: false, critical: true },
+      { id: "6", text: "Declare emergency - PAN PAN", completed: false, critical: true }
+    ],
+    completedCount: 0,
+    totalCount: 6
+  },
+
+  // Add more aircraft types...
+  {
+    id: "a350-preflight",
+    title: "Pre-flight Inspection",
+    phase: "preflight",
+    aircraftType: "Airbus A350",
+    estimatedTime: "22 min",
+    mandatory: true,
+    items: [
+      { id: "1", text: "Aircraft documents - CHECK", completed: false, critical: true },
+      { id: "2", text: "Flight plan and weather - REVIEWED", completed: false, critical: true },
+      { id: "3", text: "FMGC flight plan - ENTERED", completed: false },
+      { id: "4", text: "External inspection - COMPLETED", completed: false, critical: true },
+      { id: "5", text: "Fuel quantity - VERIFIED", completed: false, critical: true },
+      { id: "6", text: "Weight and balance - CALCULATED", completed: false, critical: true },
+      { id: "7", text: "Sharklet inspection - COMPLETED", completed: false }
+    ],
+    completedCount: 0,
+    totalCount: 7
   }
 ];
 

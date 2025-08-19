@@ -187,7 +187,9 @@ export default function EnhancedAnnouncementsTab() {
       // Add dual language support
       if (dualLanguage && selectedAirline?.secondaryLanguage) {
         const translations = getAnnouncementTranslations(announcement, selectedAirline.secondaryLanguage);
-        textToSpeak = `${announcement.text} ... ${translations}`;
+        if (translations !== announcement.text) {
+          textToSpeak = `${announcement.text} ... ${translations}`;
+        }
       }
 
       await generateSpeech({
@@ -534,9 +536,47 @@ function getAnnouncementTranslations(announcement: Announcement, language: strin
       "German": "Guten Tag, meine Damen und Herren, und willkommen an Bord. Im Namen des Kapitäns und der gesamten Besatzung freuen wir uns, Sie heute bei uns zu haben.",
       "French": "Bonjour mesdames et messieurs, et bienvenue à bord. Au nom du commandant et de tout l'équipage, nous sommes heureux de vous accueillir aujourd'hui.",
       "Spanish": "Buenos días señoras y señores, y bienvenidos a bordo. En nombre del capitán y toda la tripulación, nos complace tenerlos con nosotros hoy.",
-      "Italian": "Buongiorno signore e signori, e benvenuti a bordo. A nome del capitano e di tutto l'equipaggio, siamo lieti di avervi con noi oggi."
+      "Italian": "Buongiorno signore e signori, e benvenuti a bordo. A nome del capitano e di tutto l'equipaggio, siamo lieti di avervi con noi oggi.",
+      "Dutch": "Goedemorgen dames en heren, en welkom aan boord. Namens de kapitein en de volledige bemanning zijn wij blij u vandaag bij ons te hebben.",
+      "Swedish": "God morgon damer och herrar, och välkomna ombord. På kaptenens och hela besättningens vägnar är vi glada att ha er med oss idag.",
+      "Japanese": "おはようございます、ご搭乗いただきありがとうございます。機長および乗務員一同、本日は当便をご利用いただき誠にありがとうございます。"
     },
-    // Add more translations as needed
+    "safety-seatbelts": {
+      "German": "Bitte stellen Sie sicher, dass Ihre Sicherheitsgurte fest angezogen sind und bleiben Sie angeschnallt, bis das Anschnallzeichen erlischt.",
+      "French": "Veuillez vous assurer que vos ceintures de sécurité sont bien attachées et restez attachés jusqu'à ce que le signal de ceinture s'éteigne.",
+      "Spanish": "Por favor asegúrense de que sus cinturones de seguridad estén bien abrochados y permanezcan abrochados hasta que se apague la señal.",
+      "Italian": "Vi preghiamo di assicurarvi che le cinture di sicurezza siano ben allacciate e rimanere allacciati fino allo spegnimento del segnale.",
+      "Dutch": "Zorg ervoor dat uw veiligheidsgordels goed vastgemaakt zijn en blijf vastgegord tot het gordelteiken uitgaat.",
+      "Swedish": "Var vänliga se till att era säkerhetsbälten är ordentligt fastspända och håll dem på tills bältestecknet släcks.",
+      "Japanese": "シートベルトをしっかりとお締めいただき、シートベルト着用サインが消灯するまでお席にお座りください。"
+    },
+    "boarding-complete": {
+      "German": "Das Boarding ist abgeschlossen. Wir bereiten uns auf den Start vor. Vielen Dank für Ihre Geduld.",
+      "French": "L'embarquement est terminé. Nous nous préparons au départ. Merci pour votre patience.",
+      "Spanish": "El abordaje ha sido completado. Nos estamos preparando para la salida. Gracias por su paciencia.",
+      "Italian": "L'imbarco è completato. Ci stiamo preparando per la partenza. Grazie per la vostra pazienza.",
+      "Dutch": "Het boarden is voltooid. Wij bereiden ons voor op vertrek. Dank voor uw geduld.",
+      "Swedish": "Ombordstigning är klar. Vi förbereder oss för avfärd. Tack för ert tålamod.",
+      "Japanese": "ご搭乗手続きが完了いたしました。出発の準備をしております。お待ちいただきありがとうございます。"
+    },
+    "turbulence-warning": {
+      "German": "Aufgrund von Turbulenzen bitten wir alle Passagiere, sich anzuschnallen und in ihren Sitzen zu bleiben.",
+      "French": "En raison de turbulences, nous demandons à tous les passagers de boucler leur ceinture et de rester assis.",
+      "Spanish": "Debido a turbulencias, pedimos a todos los pasajeros que se abrochen los cinturones y permanezcan sentados.",
+      "Italian": "A causa di turbolenze, chiediamo a tutti i passeggeri di allacciare le cinture e rimanere seduti.",
+      "Dutch": "Vanwege turbulentie vragen wij alle passagiers hun gordels vast te maken en te blijven zitten.",
+      "Swedish": "På grund av turbulens ber vi alla passagerare att spänna fast bältena och sitta kvar.",
+      "Japanese": "乱気流のため、全てのお客様にはシートベルトをお締めいただき、お席にお座りください。"
+    },
+    "descent-preparation": {
+      "German": "Wir beginnen nun unseren Sinkflug. Bitte stellen Sie Ihre Sitze aufrecht und klappen Sie Ihre Tische ein.",
+      "French": "Nous commençons maintenant notre descente. Veuillez redresser vos sièges et replier vos tables.",
+      "Spanish": "Ahora comenzamos nuestro descenso. Por favor pongan sus asientos en posición vertical y guarden sus mesas.",
+      "Italian": "Iniziamo ora la nostra discesa. Vi preghiamo di raddrizzare i sedili e ripiegare i tavolini.",
+      "Dutch": "Wij beginnen nu onze daling. Zet uw stoelen rechtop en klap uw tafeltjes in.",
+      "Swedish": "Vi börjar nu vår nedstigning. Vänligen räta upp era säten och fäll upp borden.",
+      "Japanese": "降下を開始いたします。お座席を元の位置にお戻しいただき、テーブルをお片付けください。"
+    }
   };
 
   return translations[announcement.id]?.[language] || announcement.text;
