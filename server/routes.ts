@@ -6,14 +6,15 @@ import { insertAnnouncementSchema, insertChecklistSchema, insertNoteSchema, inse
 import { atc24Client } from "./atc24-client";
 import { EnhancedAircraft } from "@shared/atc24-types";
 import { elevenLabsService } from "./elevenlabs";
+import { join } from "path";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  
+
   // Announcements routes
   app.get("/api/announcements", async (req, res) => {
     try {
       const { phase } = req.query;
-      const announcements = phase 
+      const announcements = phase
         ? await storage.getAnnouncementsByPhase(phase as string)
         : await storage.getAnnouncements();
       res.json(announcements);
@@ -186,21 +187,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
           airportCode: "IRFD",
           chartType: "Ground Chart",
           fileName: "IRFD_CHART_TYPE_GROUND.svg",
-          fileUrl: "/attached_assets/charts/IRFD_CHART_TYPE_GROUND.svg",
+          fileUrl: "/api/charts/IRFD_CHART_TYPE_GROUND.svg",
           createdAt: new Date().toISOString()
         }
       ];
-      
+
       res.json(charts);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch charts" });
     }
   });
 
+  // Serve individual chart files with proper headers
+  app.get("/api/charts/:filename", (req, res) => {
+    const filename = req.params.filename;
+    const filePath = join(__dirname, '../attached_assets/charts/', filename);
+
+    // Set proper headers for SVG files
+    if (filename.endsWith('.svg')) {
+      res.setHeader('Content-Type', 'image/svg+xml');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+    }
+
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        res.status(404).json({ error: 'Chart not found' });
+      }
+    });
+  });
+
+
   app.post("/api/charts", async (req, res) => {
     try {
       const { title, airportCode, chartType, fileName, fileUrl } = req.body;
-      
+
       const newChart = {
         id: Date.now().toString(),
         title,
@@ -210,7 +230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         fileUrl,
         createdAt: new Date().toISOString()
       };
-      
+
       res.status(201).json(newChart);
     } catch (error) {
       res.status(400).json({ message: "Invalid chart data" });
@@ -382,7 +402,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Demo mode toggle
   let forceDemo = false;
-  
+
   app.post("/api/demo-mode", (req, res) => {
     forceDemo = req.body.enabled;
     console.log(`Demo mode ${forceDemo ? 'enabled' : 'disabled'}`);
@@ -393,12 +413,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/aircraft", async (req, res) => {
     try {
       let aircraft = atc24Client.getAllAircraft();
-      
+
       // If no real data available or demo mode forced, use demo data
       if (aircraft.length === 0 || forceDemo) {
         aircraft = getDemoAircraft();
       }
-      
+
       res.json(aircraft);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch aircraft data" });
