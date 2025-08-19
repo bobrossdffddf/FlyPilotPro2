@@ -39,11 +39,12 @@ Preferred communication style: Simple, everyday language.
 - **Context providers** for theme management and global state
 
 ### Key Features
-- **Passenger Announcements**: Pre-recorded announcements organized by flight phases with audio playback simulation
-- **Aviation Charts**: Chart viewer with upload capabilities for navigation aids
-- **SIDs Database**: Standard Instrument Departures searchable by airport and runway
-- **Flight Checklists**: Interactive checklists for different flight phases with progress tracking
-- **Notepad**: Flight notes management with flight number association
+- **Professional PA System**: ElevenLabs voice synthesis with airline-specific accents and dual language support
+- **ATC Radar Display**: Real-time aircraft tracking with popout capabilities using ATC24 data
+- **Aviation Charts Library**: Professional chart management with 19 chart types and popout viewing
+- **Aircraft Checklists**: Interactive checklists for 20+ aircraft types with progress tracking
+- **Weight & Balance Calculator**: Professional W&B calculations with real aircraft specifications
+- **Flight Log & Notes**: Flight-specific note management with persistent storage
 
 ### Styling System
 - **Aviation-themed design** with cockpit-inspired dark color scheme

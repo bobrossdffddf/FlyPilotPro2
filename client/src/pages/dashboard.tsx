@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import { EnhancedAircraft } from "@shared/atc24-types";
 import { TabsHeader } from "@/components/ui/tabs-header";
 import EnhancedAnnouncementsTab from "@/components/tabs/enhanced-announcements-tab";
-import ChartsTab from "@/components/tabs/charts-tab";
+import EnhancedChartsTab from "@/components/tabs/enhanced-charts-tab";
 import SidsTab from "@/components/tabs/sids-tab";
 import NotepadTab from "@/components/tabs/notepad-tab";
 import EnhancedChecklistsTab from "@/components/tabs/enhanced-checklists-tab";
@@ -41,7 +41,7 @@ export default function Dashboard() {
       case "announcements":
         return <EnhancedAnnouncementsTab />;
       case "charts":
-        return <ChartsTab />;
+        return <EnhancedChartsTab />;
       case "sids":
         return <SidsTab />;
       case "notepad":

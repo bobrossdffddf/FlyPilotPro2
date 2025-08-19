@@ -6,8 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useElevenLabs } from "@/hooks/use-elevenlabs";
 import { useToast } from "@/hooks/use-toast";
+import { airlineConfigs, detectAirlineFromCallsign, type AirlineVoiceConfig } from "@/data/airlines";
 import { 
   Volume2, 
   VolumeX, 
@@ -17,7 +21,10 @@ import {
   StarOff, 
   Search,
   Filter,
-  Mic
+  Mic,
+  HelpCircle,
+  Globe,
+  Plane
 } from "lucide-react";
 
 interface Announcement {
@@ -108,8 +115,10 @@ export default function EnhancedAnnouncementsTab() {
   const [announcements, setAnnouncements] = useState<Announcement[]>(professionalAnnouncements);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedVoice, setSelectedVoice] = useState<string>("captain");
+  const [selectedAirline, setSelectedAirline] = useState<AirlineVoiceConfig | null>(null);
+  const [dualLanguage, setDualLanguage] = useState(false);
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [showVirtualMicHelp, setShowVirtualMicHelp] = useState(false);
   
   const { 
     voices, 
@@ -143,7 +152,7 @@ export default function EnhancedAnnouncementsTab() {
     const aviationVoices = getAviationVoices();
     let voiceToUse = aviationVoices.captain;
 
-    // Select appropriate voice based on announcement category
+    // Select appropriate voice based on announcement category and airline
     switch (announcement.category) {
       case "captain":
         voiceToUse = aviationVoices.captain;
@@ -172,19 +181,28 @@ export default function EnhancedAnnouncementsTab() {
 
     try {
       setPlayingId(announcement.id);
+      
+      let textToSpeak = announcement.text;
+      
+      // Add dual language support
+      if (dualLanguage && selectedAirline?.secondaryLanguage) {
+        const translations = getAnnouncementTranslations(announcement, selectedAirline.secondaryLanguage);
+        textToSpeak = `${announcement.text} ... ${translations}`;
+      }
+
       await generateSpeech({
-        text: announcement.text,
+        text: textToSpeak,
         voice_id: voiceToUse.voice_id,
         stability: 0.7,
         similarity_boost: 0.8,
-        style: 0.1,
+        style: selectedAirline?.accent === "British" ? 0.3 : 0.1,
         use_speaker_boost: true
       });
 
       // Reset playing state when audio ends
       setTimeout(() => {
         setPlayingId(null);
-      }, parseInt(announcement.duration) * 1000);
+      }, parseInt(announcement.duration) * 1000 * (dualLanguage ? 1.8 : 1));
 
     } catch (error) {
       setPlayingId(null);
@@ -252,38 +270,80 @@ export default function EnhancedAnnouncementsTab() {
         </div>
 
         {/* Controls */}
-        <div className="flex flex-wrap gap-4 items-center">
-          <div className="flex items-center gap-2">
-            <Search size={16} className="text-text-muted" />
-            <Input
-              placeholder="Search announcements..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-64 bg-panel-bg border-panel-gray"
-            />
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Filter size={16} className="text-text-muted" />
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-40 bg-panel-bg border-panel-gray">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="captain">Captain</SelectItem>
-                <SelectItem value="service">Service</SelectItem>
-                <SelectItem value="safety">Safety</SelectItem>
-                <SelectItem value="emergency">Emergency</SelectItem>
-              </SelectContent>
-            </Select>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex items-center gap-2">
+              <Search size={16} className="text-text-muted" />
+              <Input
+                placeholder="Search announcements..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-64 bg-panel-bg border-panel-gray"
+              />
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Filter size={16} className="text-text-muted" />
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-40 bg-panel-bg border-panel-gray">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="captain">Captain</SelectItem>
+                  <SelectItem value="service">Service</SelectItem>
+                  <SelectItem value="safety">Safety</SelectItem>
+                  <SelectItem value="emergency">Emergency</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Mic size={16} className="text-text-muted" />
-            <Badge variant="outline" className="bg-nav-green/10 text-nav-green border-nav-green/30">
-              ElevenLabs Active
-            </Badge>
+          <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex items-center gap-2">
+              <Plane size={16} className="text-text-muted" />
+              <Select 
+                value={selectedAirline?.code || ""}
+                onValueChange={(value) => {
+                  const airline = airlineConfigs.find(a => a.code === value);
+                  setSelectedAirline(airline || null);
+                }}
+              >
+                <SelectTrigger className="w-48 bg-panel-bg border-panel-gray">
+                  <SelectValue placeholder="Select Airline" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Auto-detect from callsign</SelectItem>
+                  {airlineConfigs.map(airline => (
+                    <SelectItem key={airline.code} value={airline.code}>
+                      {airline.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Globe size={16} className="text-text-muted" />
+              <Switch
+                checked={dualLanguage}
+                onCheckedChange={setDualLanguage}
+                disabled={!selectedAirline?.secondaryLanguage}
+              />
+              <Label className="text-sm text-text-muted">
+                Dual Language
+              </Label>
+            </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowVirtualMicHelp(true)}
+              className="text-text-muted hover:text-text-primary"
+            >
+              <HelpCircle size={16} className="mr-1" />
+              Virtual Mic
+            </Button>
           </div>
         </div>
       </div>
@@ -419,6 +479,61 @@ export default function EnhancedAnnouncementsTab() {
           </motion.div>
         )}
       </div>
+
+      {/* Virtual Mic Help Dialog */}
+      {showVirtualMicHelp && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-panel-bg border border-panel-gray rounded-lg p-6 max-w-md mx-4"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <HelpCircle className="text-aviation-blue" size={24} />
+              <h3 className="text-xl font-semibold text-text-primary">Virtual Microphone Setup</h3>
+            </div>
+            
+            <Alert className="mb-4">
+              <Mic className="h-4 w-4" />
+              <AlertDescription className="text-text-secondary">
+                To create a virtual microphone for live announcements:
+                <br /><br />
+                1. Install VoiceMeeter Banana (free software)
+                <br />
+                2. Set VoiceMeeter Input as your default microphone
+                <br />
+                3. Route your browser audio through VoiceMeeter
+                <br />
+                4. Use the PA System to play announcements that will be heard as if from a real microphone
+                <br /><br />
+                This allows you to use the professional announcements in flight simulators or real ATC communications.
+              </AlertDescription>
+            </Alert>
+
+            <Button
+              onClick={() => setShowVirtualMicHelp(false)}
+              className="w-full"
+            >
+              Got it!
+            </Button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
+}
+
+// Helper function to get announcement translations
+function getAnnouncementTranslations(announcement: Announcement, language: string): string {
+  const translations: Record<string, Record<string, string>> = {
+    "welcome-boarding": {
+      "German": "Guten Tag, meine Damen und Herren, und willkommen an Bord. Im Namen des Kapitäns und der gesamten Besatzung freuen wir uns, Sie heute bei uns zu haben.",
+      "French": "Bonjour mesdames et messieurs, et bienvenue à bord. Au nom du commandant et de tout l'équipage, nous sommes heureux de vous accueillir aujourd'hui.",
+      "Spanish": "Buenos días señoras y señores, y bienvenidos a bordo. En nombre del capitán y toda la tripulación, nos complace tenerlos con nosotros hoy.",
+      "Italian": "Buongiorno signore e signori, e benvenuti a bordo. A nome del capitano e di tutto l'equipaggio, siamo lieti di avervi con noi oggi."
+    },
+    // Add more translations as needed
+  };
+
+  return translations[announcement.id]?.[language] || announcement.text;
 }
