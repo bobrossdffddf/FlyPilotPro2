@@ -303,17 +303,21 @@ export default function EnhancedAnnouncementsTab() {
             <div className="flex items-center gap-2">
               <Plane size={16} className="text-text-muted" />
               <Select 
-                value={selectedAirline?.code || ""}
+                value={selectedAirline?.code || "auto"}
                 onValueChange={(value) => {
-                  const airline = airlineConfigs.find(a => a.code === value);
-                  setSelectedAirline(airline || null);
+                  if (value === "auto") {
+                    setSelectedAirline(null);
+                  } else {
+                    const airline = airlineConfigs.find(a => a.code === value);
+                    setSelectedAirline(airline || null);
+                  }
                 }}
               >
                 <SelectTrigger className="w-48 bg-panel-bg border-panel-gray">
                   <SelectValue placeholder="Select Airline" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Auto-detect from callsign</SelectItem>
+                  <SelectItem value="auto">Auto-detect from callsign</SelectItem>
                   {airlineConfigs.map(airline => (
                     <SelectItem key={airline.code} value={airline.code}>
                       {airline.name}

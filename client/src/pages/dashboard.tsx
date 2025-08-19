@@ -28,11 +28,38 @@ export default function Dashboard() {
         setSelectedAircraft(aircraft);
       } catch (error) {
         console.error('Failed to parse selected aircraft:', error);
-        setLocation('/');
+        // Create a default aircraft for testing
+        const defaultAircraft = {
+          callsign: "UAL123",
+          pilot: "Captain Smith",
+          aircraft: "Boeing 737-800",
+          departure: "KJFK",
+          arrival: "KLAX",
+          altitude: 37000,
+          groundSpeed: 480,
+          heading: 270,
+          latitude: 40.6413,
+          longitude: -74.1793
+        };
+        setSelectedAircraft(defaultAircraft);
+        sessionStorage.setItem('selectedAircraft', JSON.stringify(defaultAircraft));
       }
     } else {
-      // No aircraft selected, redirect to flight selection
-      setLocation('/');
+      // Create a default aircraft for testing
+      const defaultAircraft = {
+        callsign: "UAL123",
+        pilot: "Captain Smith",
+        aircraft: "Boeing 737-800",
+        departure: "KJFK",
+        arrival: "KLAX",
+        altitude: 37000,
+        groundSpeed: 480,
+        heading: 270,
+        latitude: 40.6413,
+        longitude: -74.1793
+      };
+      setSelectedAircraft(defaultAircraft);
+      sessionStorage.setItem('selectedAircraft', JSON.stringify(defaultAircraft));
     }
   }, [setLocation]);
 
