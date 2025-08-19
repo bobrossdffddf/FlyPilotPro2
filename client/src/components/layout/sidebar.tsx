@@ -69,7 +69,7 @@ export default function Sidebar({ activeTab, onTabChange, selectedAircraft }: Si
           </div>
           <div>
             <h1 className="text-lg font-semibold text-text-primary" data-testid="app-title">
-              AviationPro
+              24FLY
             </h1>
             <p className="text-sm text-text-muted">Commercial Assistant</p>
           </div>

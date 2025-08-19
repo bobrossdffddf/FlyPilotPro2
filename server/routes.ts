@@ -178,46 +178,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Charts routes
   app.get("/api/charts", async (req, res) => {
     try {
-      // Return example charts from attached assets
+      // Return real chart from attached assets
       const charts = [
         {
           id: "1",
-          title: "ICAO Standard Runway Chart",
-          airportCode: "ICAO",
-          chartType: "Runway Chart",
-          fileName: "ICAO_CHART_TYPE_RUNWAY.svg",
-          fileUrl: "/attached_assets/charts/ICAO_CHART_TYPE_RUNWAY.svg",
+          title: "IRFD Ground Chart",
+          airportCode: "IRFD",
+          chartType: "Ground Chart",
+          fileName: "IRFD_CHART_TYPE_GROUND.svg",
+          fileUrl: "/attached_assets/charts/IRFD_CHART_TYPE_GROUND.svg",
           createdAt: new Date().toISOString()
-        },
-        {
-          id: "2",
-          title: "KJFK ILS RWY 04L Approach",
-          airportCode: "KJFK",
-          chartType: "ILS Chart",
-          fileName: "kjfk_ils_04l.pdf",
-          fileUrl: "https://aeronav.faa.gov/d-tpp/2501/00585IL04L.PDF",
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: "3",
-          title: "KLAX Airport Diagram",
-          airportCode: "KLAX",
-          chartType: "Airport Diagram",
-          fileName: "klax_airport_diagram.pdf",
-          fileUrl: "https://aeronav.faa.gov/d-tpp/2501/00566AD.PDF",
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: "4",
-          title: "EGLL Heathrow ILS RWY 09L",
-          airportCode: "EGLL",
-          chartType: "ILS Chart",
-          fileName: "egll_ils_09l.pdf",
-          fileUrl: "https://www.aurora.nats.co.uk/htmlAIP/Publications/2024-12-05-AIRAC/html/eAIP/EG-AD-2.EGLL-10-en-GB.html",
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: "5",
+        }
           title: "EDDM Munich SID TOBAK 1F",
           airportCode: "EDDM",
           chartType: "SID Chart",
