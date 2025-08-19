@@ -5,7 +5,6 @@ import { storage } from "./storage";
 import { insertAnnouncementSchema, insertChecklistSchema, insertNoteSchema, insertFlightStatusSchema, insertWeightBalanceSchema } from "@shared/schema";
 import { atc24Client } from "./atc24-client";
 import { EnhancedAircraft } from "@shared/atc24-types";
-import { elevenLabsService } from "./elevenlabs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -288,45 +287,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ElevenLabs TTS routes
-  app.get("/api/voices", async (req, res) => {
-    try {
-      const voices = await elevenLabsService.getVoices();
-      res.json(voices);
-    } catch (error) {
-      console.error('Failed to fetch voices:', error);
-      res.status(500).json({ message: "Failed to fetch voices from ElevenLabs" });
-    }
-  });
-
-  app.post("/api/tts", async (req, res) => {
-    try {
-      const { text, voice_id } = req.body;
-      if (!text || !voice_id) {
-        return res.status(400).json({ message: "Text and voice_id are required" });
-      }
-
-      const audioBuffer = await elevenLabsService.generateSpeech({
-        text,
-        voice_id,
-        voice_settings: {
-          stability: 0.7,
-          similarity_boost: 0.8,
-          style: 0.1,
-          use_speaker_boost: true,
-        },
-      });
-
-      res.set({
-        'Content-Type': 'audio/mpeg',
-        'Content-Length': audioBuffer.length.toString(),
-      });
-      res.send(audioBuffer);
-    } catch (error) {
-      console.error('Failed to generate speech:', error);
-      res.status(500).json({ message: "Failed to generate speech" });
-    }
-  });
+  // TTS is now handled client-side using Web Speech API
 
   // Weight and balance routes
   app.get("/api/weight-balance/:aircraftType", async (req, res) => {

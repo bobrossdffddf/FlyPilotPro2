@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useElevenLabs } from "@/hooks/use-elevenlabs";
+import { useTTS } from "@/hooks/use-tts";
 import { useToast } from "@/hooks/use-toast";
 import { airlineConfigs, detectAirlineFromCallsign, type AirlineVoiceConfig } from "@/data/airlines";
 import { 
@@ -124,12 +124,13 @@ export default function EnhancedAnnouncementsTab() {
   const { 
     voices, 
     isLoading, 
+    isSupported,
     currentAudio, 
     fetchVoices, 
     generateSpeech, 
     stopSpeech,
     getAviationVoices 
-  } = useElevenLabs();
+  } = useTTS();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -174,7 +175,16 @@ export default function EnhancedAnnouncementsTab() {
     if (!voiceToUse) {
       toast({
         title: "Voice Not Available",
-        description: "Please ensure ElevenLabs voices are loaded",
+        description: "Please ensure voices are loaded",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!isSupported) {
+      toast({
+        title: "TTS Not Supported",
+        description: "Your browser doesn't support text-to-speech",
         variant: "destructive"
       });
       return;
@@ -196,10 +206,9 @@ export default function EnhancedAnnouncementsTab() {
       await generateSpeech({
         text: textToSpeak,
         voice_id: voiceToUse.voice_id,
-        stability: 0.7,
-        similarity_boost: 0.8,
-        style: selectedAirline?.accent === "British" ? 0.3 : 0.1,
-        use_speaker_boost: true
+        rate: 0.9, // Slightly slower for clarity
+        pitch: selectedAirline?.accent === "British" ? 1.1 : 1.0,
+        volume: 1.0
       });
 
       toast({
