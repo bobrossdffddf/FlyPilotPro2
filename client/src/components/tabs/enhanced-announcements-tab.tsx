@@ -111,7 +111,11 @@ const professionalAnnouncements: Announcement[] = [
   }
 ];
 
-export default function EnhancedAnnouncementsTab() {
+interface EnhancedAnnouncementsTabProps {
+  selectedAircraft: EnhancedAircraft | null;
+}
+
+export default function EnhancedAnnouncementsTab({ selectedAircraft }: EnhancedAnnouncementsTabProps) {
   const [announcements, setAnnouncements] = useState<Announcement[]>(professionalAnnouncements);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -195,6 +199,15 @@ export default function EnhancedAnnouncementsTab() {
 
       let textToSpeak = announcement.text;
 
+      // Replace altitude in cruising announcement with real aircraft data
+      if (announcement.id === "cruising-altitude" && selectedAircraft?.altitude) {
+        const altitudeInWords = convertAltitudeToWords(selectedAircraft.altitude);
+        textToSpeak = textToSpeak.replace(
+          "We've reached our cruising altitude.",
+          `We've reached our cruising altitude of ${altitudeInWords} feet.`
+        );
+      }
+
       // Add dual language support
       if (dualLanguage && selectedAirline?.secondaryLanguage) {
         const translations = getAnnouncementTranslations(announcement, selectedAirline.secondaryLanguage);
@@ -219,10 +232,10 @@ export default function EnhancedAnnouncementsTab() {
       // Update voice index for next announcement
       setCurrentVoiceIndex(prevIndex => (prevIndex + 1) % voices.length);
 
-      // Reset playing state when audio ends
+      // Reset playing state when audio ends - improved timing
       setTimeout(() => {
         setPlayingId(null);
-      }, parseInt(announcement.duration) * 1000 * (dualLanguage ? 1.8 : 1));
+      }, parseInt(announcement.duration) * 1000 * (dualLanguage ? 1.8 : 1) + 500); // Add 500ms buffer
 
     } catch (error) {
       setPlayingId(null);
@@ -256,6 +269,38 @@ export default function EnhancedAnnouncementsTab() {
       case "emergency": return "🚨";
       default: return "📢";
     }
+  };
+
+  // Helper function to convert altitude number to words
+  const convertAltitudeToWords = (altitude: number): string => {
+    const thousands = Math.floor(altitude / 1000);
+    const hundreds = Math.floor((altitude % 1000) / 100);
+    
+    const numberToWords = (num: number): string => {
+      const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+      const teens = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+      const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+      
+      if (num < 10) return ones[num];
+      if (num < 20) return teens[num - 10];
+      if (num < 100) {
+        const tenDigit = Math.floor(num / 10);
+        const oneDigit = num % 10;
+        return tens[tenDigit] + (oneDigit > 0 ? '-' + ones[oneDigit] : '');
+      }
+      return num.toString();
+    };
+    
+    let result = '';
+    if (thousands > 0) {
+      result += numberToWords(thousands) + ' thousand';
+    }
+    if (hundreds > 0) {
+      if (result) result += ' ';
+      result += numberToWords(hundreds) + ' hundred';
+    }
+    
+    return result || 'zero';
   };
 
   return (

@@ -3,6 +3,10 @@ import { motion } from "framer-motion";
 import { useLocation } from "wouter";
 import { EnhancedAircraft } from "@shared/atc24-types";
 import { TabsHeader } from "@/components/ui/tabs-header";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 import EnhancedAnnouncementsTab from "@/components/tabs/enhanced-announcements-tab";
 import EnhancedChartsTab from "@/components/tabs/enhanced-charts-tab";
 import SidsTab from "@/components/tabs/sids-tab";
@@ -18,6 +22,7 @@ type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("announcements");
   const [selectedAircraft, setSelectedAircraft] = useState<EnhancedAircraft | null>(null);
+  const [showAnnouncementDialog, setShowAnnouncementDialog] = useState(true);
   const [, setLocation] = useLocation();
 
   // Check for selected aircraft from flight selection
@@ -30,34 +35,38 @@ export default function Dashboard() {
       } catch (error) {
         console.error('Failed to parse selected aircraft:', error);
         // Create a default aircraft for testing
-        const defaultAircraft = {
+        const defaultAircraft: EnhancedAircraft = {
           callsign: "UAL123",
           pilot: "Captain Smith",
           aircraft: "Boeing 737-800",
-          departure: "KJFK",
-          arrival: "KLAX",
           altitude: 37000,
+          speed: 480,
           groundSpeed: 480,
           heading: 270,
-          latitude: 40.6413,
-          longitude: -74.1793
+          position: { x: -74.1793, y: 40.6413 },
+          wind: "270@15",
+          isOnGround: false,
+          phase: "cruise",
+          lastUpdate: new Date()
         };
         setSelectedAircraft(defaultAircraft);
         sessionStorage.setItem('selectedAircraft', JSON.stringify(defaultAircraft));
       }
     } else {
       // Create a default aircraft for testing
-      const defaultAircraft = {
+      const defaultAircraft: EnhancedAircraft = {
         callsign: "UAL123",
         pilot: "Captain Smith",
         aircraft: "Boeing 737-800",
-        departure: "KJFK",
-        arrival: "KLAX",
         altitude: 37000,
+        speed: 480,
         groundSpeed: 480,
         heading: 270,
-        latitude: 40.6413,
-        longitude: -74.1793
+        position: { x: -74.1793, y: 40.6413 },
+        wind: "270@15",
+        isOnGround: false,
+        phase: "cruise",
+        lastUpdate: new Date()
       };
       setSelectedAircraft(defaultAircraft);
       sessionStorage.setItem('selectedAircraft', JSON.stringify(defaultAircraft));
@@ -67,7 +76,7 @@ export default function Dashboard() {
   const renderActiveTab = () => {
     switch (activeTab) {
       case "announcements":
-        return <EnhancedAnnouncementsTab />;
+        return <EnhancedAnnouncementsTab selectedAircraft={selectedAircraft} />;
       case "charts":
         return <EnhancedChartsTab />;
       case "sids":
@@ -83,7 +92,7 @@ export default function Dashboard() {
       case "help":
         return <HelpTab />;
       default:
-        return <EnhancedAnnouncementsTab />;
+        return <EnhancedAnnouncementsTab selectedAircraft={selectedAircraft} />;
     }
   };
 
@@ -119,6 +128,43 @@ export default function Dashboard() {
           {renderActiveTab()}
         </motion.div>
       </main>
+      
+      {/* TTS Service Notice Dialog */}
+      <Dialog open={showAnnouncementDialog} onOpenChange={setShowAnnouncementDialog}>
+        <DialogContent className="sm:max-w-md bg-panel-bg border-panel-gray">
+          <DialogHeader>
+            <DialogTitle className="text-text-primary flex items-center gap-2">
+              <Info className="h-5 w-5 text-aviation-blue" />
+              Flight Management System
+            </DialogTitle>
+            <DialogDescription className="text-text-secondary">
+              Aviation announcement information
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Alert className="border-aviation-blue/20 bg-aviation-blue/10">
+              <Info className="h-4 w-4" />
+              <AlertDescription className="text-text-primary">
+                Professional aviation announcements use a 3rd party text-to-speech service for natural voice synthesis. 
+                <strong className="text-aviation-blue"> No login or registration is required</strong> - the service is completely free and anonymous.
+              </AlertDescription>
+            </Alert>
+            <div className="text-sm text-text-muted space-y-2">
+              <p>• High-quality AI voices in multiple languages</p>
+              <p>• Professional aviation terminology</p>
+              <p>• No data collection or account needed</p>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <Button 
+              onClick={() => setShowAnnouncementDialog(false)}
+              className="bg-aviation-blue hover:bg-aviation-blue/80"
+            >
+              Continue to Flight Deck
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

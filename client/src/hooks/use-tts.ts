@@ -166,18 +166,25 @@ export function useTTS() {
       
       setCurrentAudio(audio);
       
-      // Set up event handlers
+      // Set up event handlers to ensure state is cleared
       audio.onended = () => {
         setCurrentAudio(null);
+        setIsLoading(false);
       };
       
       audio.onerror = () => {
         setCurrentAudio(null);
+        setIsLoading(false);
         toast({
           title: "Playback Error",
           description: "Failed to play generated speech",
           variant: "destructive"
         });
+      };
+      
+      audio.onpause = () => {
+        setCurrentAudio(null);
+        setIsLoading(false);
       };
       
       // Play the audio
@@ -203,6 +210,7 @@ export function useTTS() {
       currentAudio.currentTime = 0;
       setCurrentAudio(null);
     }
+    setIsLoading(false);
   }, [currentAudio]);
 
   // Professional aviation voices with fallbacks
