@@ -114,11 +114,11 @@ export default function FlightSelection() {
                 <i className="fas fa-plane text-white text-xl"></i>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-text-primary">ATC 24 Flight Management</h1>
+                <h1 className="text-2xl font-bold text-text-primary">24FLY Flight Management</h1>
                 <p className="text-text-secondary">Professional Aviation Assistant</p>
               </div>
             </div>
-            
+
             {/* Status Indicator */}
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2">
@@ -127,7 +127,7 @@ export default function FlightSelection() {
                   {status?.connected ? 'ATC 24 Connected' : 'Disconnected'}
                 </span>
               </div>
-              
+
               {status && (
                 <div className="text-sm text-text-secondary">
                   <span className="font-mono">{status.aircraftCount}</span> aircraft online
@@ -203,17 +203,17 @@ export default function FlightSelection() {
                       <span className="text-text-muted text-sm">Aircraft</span>
                       <span className="text-text-primary font-medium">{flight.aircraft}</span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-text-muted text-sm">Altitude</span>
                       <span className="text-text-primary font-mono">{flight.altitude.toLocaleString()} ft</span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-text-muted text-sm">Speed</span>
                       <span className="text-text-primary font-mono">{Math.round(flight.groundSpeed)} kts</span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-text-muted text-sm">Heading</span>
                       <span className="text-text-primary font-mono">{flight.heading.toString().padStart(3, '0')}°</span>

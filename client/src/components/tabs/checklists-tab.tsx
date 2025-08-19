@@ -23,18 +23,17 @@ interface Checklist {
   description: string;
 }
 
-// PTFS-Specific Aircraft Checklists for ATC 24 Operations
 const aircraftChecklists: Checklist[] = [
-  // Boeing 737-800 (PTFS)
+  // Boeing 737-800
   {
     id: "b737-preflight",
     name: "Cold & Dark Startup",
     aircraft: "Boeing 737-800",
     category: "preflight",
-    description: "PTFS Boeing 737 startup procedure",
+    description: "24FLY Boeing 737 startup procedure",
     items: [
       { id: "1", action: "Spawn at gate", response: "CONFIRMED", completed: false },
-      { id: "2", action: "Connect to ATC 24", response: "ONLINE", completed: false },
+      { id: "2", action: "Connect to 24FLY", response: "ONLINE", completed: false },
       { id: "3", action: "Battery", response: "ON", completed: false },
       { id: "4", action: "APU", response: "START", completed: false },
       { id: "5", action: "Navigation Lights", response: "ON", completed: false },
@@ -48,9 +47,9 @@ const aircraftChecklists: Checklist[] = [
   {
     id: "b737-startup",
     name: "Engine Start & Taxi",
-    aircraft: "Boeing 737-800", 
+    aircraft: "Boeing 737-800",
     category: "startup",
-    description: "PTFS engine start and taxi preparation",
+    description: "24FLY engine start and taxi preparation",
     items: [
       { id: "1", action: "Pushback clearance", response: "APPROVED", completed: false },
       { id: "2", action: "Engine 1 start", response: "STARTED", completed: false },
@@ -64,16 +63,16 @@ const aircraftChecklists: Checklist[] = [
       { id: "10", action: "Cabin crew notification", response: "COMPLETE", completed: false }
     ]
   },
-  // Airbus A320 (PTFS)
+  // Airbus A320
   {
     id: "a320-preflight",
-    name: "PTFS A320 Setup",
+    name: "24FLY A320 Setup",
     aircraft: "Airbus A320",
-    category: "preflight", 
-    description: "PTFS Airbus A320 game setup procedure",
+    category: "preflight",
+    description: "24FLY Airbus A320 game setup procedure",
     items: [
       { id: "1", action: "Select A320 aircraft", response: "SELECTED", completed: false },
-      { id: "2", action: "Join ATC 24 server", response: "CONNECTED", completed: false },
+      { id: "2", action: "Join 24FLY server", response: "CONNECTED", completed: false },
       { id: "3", action: "Choose departure airport", response: "SET", completed: false },
       { id: "4", action: "Load flight plan", response: "PROGRAMMED", completed: false },
       { id: "5", action: "Set fuel quantity", response: "LOADED", completed: false },
@@ -84,19 +83,19 @@ const aircraftChecklists: Checklist[] = [
       { id: "10", action: "Ready for pushback", response: "CONFIRMED", completed: false }
     ]
   },
-  // Cessna 172 (Training Aircraft - PTFS)
+  // Cessna 172 (Training Aircraft - 24FLY)
   {
     id: "c172-preflight",
-    name: "PTFS Training Flight Setup",
+    name: "24FLY Training Flight Setup",
     aircraft: "Cessna 172",
     category: "preflight",
-    description: "Basic training aircraft preparation for PTFS",
+    description: "Basic training aircraft preparation for 24FLY",
     items: [
-      { id: "1", action: "Select C172 in PTFS", response: "SELECTED", completed: false },
+      { id: "1", action: "Select C172 in 24FLY", response: "SELECTED", completed: false },
       { id: "2", action: "Choose training airport", response: "SET", completed: false },
       { id: "3", action: "Set fuel to 100%", response: "LOADED", completed: false },
       { id: "4", action: "Configure basic flight plan", response: "PROGRAMMED", completed: false },
-      { id: "5", action: "Join ATC 24 as student", response: "CONNECTED", completed: false },
+      { id: "5", action: "Join 24FLY as student", response: "CONNECTED", completed: false },
       { id: "6", action: "Request taxi clearance", response: "APPROVED", completed: false },
       { id: "7", action: "Practice radio calls", response: "ACKNOWLEDGED", completed: false },
       { id: "8", action: "Complete pattern work", response: "IN PROGRESS", completed: false },
@@ -106,7 +105,7 @@ const aircraftChecklists: Checklist[] = [
   },
   {
     id: "c172-startup",
-    name: "PTFS Training Flight",
+    name: "24FLY Training Flight",
     aircraft: "Cessna 172",
     category: "startup",
     description: "Pattern work and training procedures",
@@ -143,7 +142,7 @@ const aircraftChecklists: Checklist[] = [
     id: "emergency-rapid-descent",
     name: "Emergency Descent",
     aircraft: "Airbus A320",
-    category: "emergency", 
+    category: "emergency",
     description: "Cabin pressurization emergency",
     items: [
       { id: "1", action: "Oxygen Masks", response: "DON & 100%", completed: false },
@@ -194,9 +193,9 @@ export default function ChecklistsTab() {
     const updatedItems = currentItems.map(item =>
       item.id === itemId ? { ...item, completed: !item.completed } : item
     );
-    
+
     setChecklistStates(prev => ({ ...prev, [checklistId]: updatedItems }));
-    
+
     const item = updatedItems.find(i => i.id === itemId);
     if (item?.completed) {
       toast({
@@ -240,8 +239,8 @@ export default function ChecklistsTab() {
     <div className="h-full flex bg-panel-bg">
       {/* Sidebar */}
       <div className="w-80 border-r border-panel-gray p-6 overflow-y-auto">
-        <h2 className="text-2xl font-bold text-text-primary mb-6">Flight Checklists</h2>
-        
+        <h2 className="text-2xl font-bold text-text-primary mb-6">24FLY Checklists</h2>
+
         {/* Aircraft Filter */}
         <div className="mb-6">
           <label className="text-sm font-medium text-text-muted mb-2 block">Aircraft Type</label>
@@ -290,10 +289,10 @@ export default function ChecklistsTab() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Card 
+                <Card
                   className={`cursor-pointer transition-all duration-200 ${
-                    activeChecklist === checklist.id 
-                      ? 'ring-2 ring-aviation-blue bg-aviation-blue/5' 
+                    activeChecklist === checklist.id
+                      ? 'ring-2 ring-aviation-blue bg-aviation-blue/5'
                       : 'border-panel-gray hover:shadow-cockpit'
                   }`}
                   onClick={() => setActiveChecklist(checklist.id)}
@@ -344,7 +343,7 @@ export default function ChecklistsTab() {
             {(() => {
               const checklist = aircraftChecklists.find(c => c.id === activeChecklist);
               if (!checklist) return null;
-              
+
               const items = getChecklist(activeChecklist);
               const completion = getCompletionPercentage(activeChecklist);
 
@@ -373,7 +372,7 @@ export default function ChecklistsTab() {
                           </span>
                         </div>
                       </div>
-                      
+
                       <div className="space-x-3">
                         <Button
                           onClick={() => resetChecklist(activeChecklist)}
@@ -398,8 +397,8 @@ export default function ChecklistsTab() {
                           transition={{ delay: index * 0.05 }}
                         >
                           <Card className={`transition-all duration-200 ${
-                            item.completed 
-                              ? 'bg-nav-green/5 border-nav-green/30' 
+                            item.completed
+                              ? 'bg-nav-green/5 border-nav-green/30'
                               : 'border-panel-gray hover:shadow-cockpit'
                           }`}>
                             <CardContent className="p-4">
@@ -409,22 +408,22 @@ export default function ChecklistsTab() {
                                   onCheckedChange={() => toggleChecklistItem(activeChecklist, item.id)}
                                   className="h-5 w-5"
                                 />
-                                
+
                                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <div>
                                     <span className="text-text-primary font-medium">{item.action}</span>
                                   </div>
                                   <div>
                                     <span className={`font-mono text-sm px-2 py-1 rounded ${
-                                      item.completed 
-                                        ? 'bg-nav-green/20 text-nav-green' 
+                                      item.completed
+                                        ? 'bg-nav-green/20 text-nav-green'
                                         : 'bg-panel-gray text-text-secondary'
                                     }`}>
                                       {item.response}
                                     </span>
                                   </div>
                                 </div>
-                                
+
                                 {item.completed && (
                                   <motion.div
                                     initial={{ scale: 0 }}

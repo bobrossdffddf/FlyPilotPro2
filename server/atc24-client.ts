@@ -100,7 +100,6 @@ export class ATC24Client {
   private updateFlightPlan(flightPlan: FlightPlan) {
     this.flightPlans.set(flightPlan.callsign, flightPlan);
     
-    // Update corresponding aircraft if it exists
     if (this.aircraftData.has(flightPlan.callsign)) {
       const aircraft = this.aircraftData.get(flightPlan.callsign)!;
       aircraft.flightPlan = flightPlan;
@@ -128,7 +127,6 @@ export class ATC24Client {
     } else if (aircraft.altitude > 30000) {
       return 'cruise';
     } else {
-      // Determine by vertical speed if available, otherwise guess based on altitude trends
       return 'cruise';
     }
   }

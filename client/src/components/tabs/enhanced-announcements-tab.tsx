@@ -543,7 +543,6 @@ export default function EnhancedAnnouncementsTab() {
   );
 }
 
-// Helper function to get announcement translations
 function getAnnouncementTranslations(announcement: Announcement, language: string): string {
   const translations: Record<string, Record<string, string>> = {
     "welcome-boarding": {

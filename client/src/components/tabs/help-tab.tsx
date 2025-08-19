@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -78,7 +77,7 @@ const helpSections = [
     color: "text-warning-orange",
     description: "Interactive aircraft checklists for 20+ aircraft types",
     features: [
-      "Airbus A320, A330, A340, A350, A380",
+      "Airbus A320, A320, A330, A340, A350, A380",
       "Boeing 737, 747, 757, 767, 777, 787",
       "ATR-72, Concorde, Cessna variants",
       "Phase-based organization with progress tracking"

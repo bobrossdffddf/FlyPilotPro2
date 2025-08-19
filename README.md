@@ -1,4 +1,4 @@
-# A320 Aviation Tablet Interface
+# 24FLY Aviation Tablet Interface
 
 A professional aviation flight management application designed to replicate the look and functionality of modern A320-style Electronic Flight Bag (EFB) tablets used in commercial cockpits.
 

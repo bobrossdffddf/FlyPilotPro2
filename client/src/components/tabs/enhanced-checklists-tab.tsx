@@ -112,7 +112,6 @@ const professionalChecklists: Checklist[] = [
     totalCount: 5
   },
 
-  // Airbus A330
   {
     id: "a330-preflight",
     title: "Pre-flight Inspection",
@@ -289,7 +288,6 @@ const professionalChecklists: Checklist[] = [
     totalCount: 7
   },
 
-  // ATR-72
   {
     id: "atr72-preflight",
     title: "Pre-flight Inspection",

@@ -349,7 +349,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Demo aircraft data for development
   const getDemoAircraft = (): EnhancedAircraft[] => [
     {
       callsign: "UAL123",
@@ -404,7 +403,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   ];
 
-  // Demo mode toggle
   let forceDemo = false;
 
   app.post("/api/demo-mode", (req, res) => {
@@ -418,7 +416,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       let aircraft = atc24Client.getAllAircraft();
 
-      // If no real data available or demo mode forced, use demo data
       if (aircraft.length === 0 || forceDemo) {
         aircraft = getDemoAircraft();
       }
@@ -468,7 +465,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
 
-  // WebSocket server for real-time updates
   const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
   const clients = new Set<WebSocket>();
 
@@ -476,7 +472,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     clients.add(ws);
     console.log('Client connected to WebSocket');
 
-    // Send initial data
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({
         type: 'aircraft',
@@ -495,7 +490,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Broadcast updates to all connected clients
   function broadcastToClients(type: string, data: any) {
     const message = JSON.stringify({ type, data });
     clients.forEach(client => {
@@ -505,7 +499,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
-  // Listen for ATC 24 updates
   atc24Client.on('aircraftUpdate', (aircraft: EnhancedAircraft[]) => {
     broadcastToClients('aircraft', aircraft);
   });
