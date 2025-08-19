@@ -246,11 +246,26 @@ export default function EnhancedChartsTab() {
                   <CardContent>
                     <div className="bg-black/30 rounded-lg h-32 flex items-center justify-center mb-4">
                       {chart.fileUrl ? (
-                        <img 
-                          src={chart.fileUrl} 
-                          alt={chart.title}
-                          className="max-w-full max-h-full object-contain rounded"
-                        />
+                        chart.fileName?.endsWith('.svg') ? (
+                          <object 
+                            data={chart.fileUrl} 
+                            type="image/svg+xml"
+                            className="max-w-full max-h-full rounded"
+                            style={{ width: '100%', height: '100%' }}
+                          >
+                            <img 
+                              src={chart.fileUrl} 
+                              alt={chart.title}
+                              className="max-w-full max-h-full object-contain rounded"
+                            />
+                          </object>
+                        ) : (
+                          <img 
+                            src={chart.fileUrl} 
+                            alt={chart.title}
+                            className="max-w-full max-h-full object-contain rounded"
+                          />
+                        )
                       ) : (
                         <div className="text-center">
                           <FileText size={32} className="text-text-muted mx-auto mb-2" />
@@ -465,11 +480,26 @@ function PopoutChartDisplay({ chart, onClose }: { chart: Chart; onClose: () => v
         <CardContent className="flex-1 overflow-hidden">
           <div className="w-full h-full bg-black/20 rounded-lg overflow-auto">
             {chart.fileUrl ? (
-              <img 
-                src={chart.fileUrl} 
-                alt={chart.title}
-                className="w-full h-full object-contain"
-              />
+              chart.fileName?.endsWith('.svg') ? (
+                <object 
+                  data={chart.fileUrl} 
+                  type="image/svg+xml"
+                  className="w-full h-full"
+                  style={{ width: '100%', height: '100%' }}
+                >
+                  <img 
+                    src={chart.fileUrl} 
+                    alt={chart.title}
+                    className="w-full h-full object-contain"
+                  />
+                </object>
+              ) : (
+                <img 
+                  src={chart.fileUrl} 
+                  alt={chart.title}
+                  className="w-full h-full object-contain"
+                />
+              )
             ) : (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">

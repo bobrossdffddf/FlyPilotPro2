@@ -8,10 +8,11 @@ import {
   CheckSquare, 
   Scale,
   Settings,
-  Gauge
+  Gauge,
+  HelpCircle
 } from "lucide-react";
 
-type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | "weight" | "instruments";
+type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | "weight" | "instruments" | "help";
 
 interface TabsHeaderProps {
   activeTab: TabType;
@@ -60,6 +61,12 @@ const tabs = [
     label: "Instruments",
     icon: Gauge,
     color: "text-nav-green"
+  },
+  {
+    id: "help" as TabType,
+    label: "Help",
+    icon: HelpCircle,
+    color: "text-aviation-blue"
   }
 ];
 

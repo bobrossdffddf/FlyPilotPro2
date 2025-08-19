@@ -10,9 +10,10 @@ import NotepadTab from "@/components/tabs/notepad-tab";
 import EnhancedChecklistsTab from "@/components/tabs/enhanced-checklists-tab";
 import EnhancedWeightBalanceTab from "@/components/tabs/enhanced-weight-balance-tab";
 import InstrumentsTab from "@/components/tabs/instruments-tab";
+import HelpTab from "@/components/tabs/help-tab"; // Assuming HelpTab is in this path
 import FlightHeader from "@/components/layout/flight-header";
 
-type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | "weight" | "instruments";
+type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | "weight" | "instruments" | "help";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("announcements");
@@ -79,6 +80,8 @@ export default function Dashboard() {
         return <EnhancedWeightBalanceTab />;
       case "instruments":
         return <InstrumentsTab />;
+      case "help":
+        return <HelpTab />;
       default:
         return <EnhancedAnnouncementsTab />;
     }
