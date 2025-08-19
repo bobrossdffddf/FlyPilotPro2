@@ -1,7 +1,50 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, boolean, integer, jsonb, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, boolean, integer, jsonb, timestamp, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// ATC 24 Data Types
+export interface AircraftData {
+  [callsign: string]: {
+    heading: number;
+    playerName: string;
+    altitude: number;
+    aircraftType: string;
+    position: {
+      y: number;
+      x: number;
+    };
+    speed: number;
+    wind: string;
+    isOnGround?: boolean;
+    groundSpeed: number;
+  };
+}
+
+export interface FlightPlan {
+  robloxName: string;
+  callsign: string;
+  realcallsign: string;
+  aircraft: string;
+  flightrules: string;
+  departing: string;
+  arriving: string;
+  route: string;
+  flightlevel: string;
+}
+
+export interface Position {
+  holder: string | null;
+  claimable: boolean;
+  airport: string;
+  position: string;
+  queue: string[];
+}
+
+export interface WebSocketMessage {
+  t: "ACFT_DATA" | "EVENT_ACFT_DATA" | "FLIGHT_PLAN" | "EVENT_FLIGHT_PLAN" | "CONTROLLERS";
+  d: AircraftData | FlightPlan | Position[];
+}
 
 export const announcements = pgTable("announcements", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -13,8 +56,8 @@ export const announcements = pgTable("announcements", {
   audioUrl: text("audio_url"),
   icon: text("icon").notNull(),
   iconColor: text("icon_color").notNull(),
-  isFavorite: boolean("is_favorite").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
+  isFavorite: boolean("is_favorite").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const checklists = pgTable("checklists", {

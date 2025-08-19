@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { FlightStatus } from "@shared/schema";
+import { EnhancedAircraft } from "@shared/atc24-types";
 import { queryClient } from "@/lib/queryClient";
 
 type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists";
@@ -7,9 +8,10 @@ type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists";
 interface SidebarProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
+  selectedAircraft?: EnhancedAircraft;
 }
 
-export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
+export default function Sidebar({ activeTab, onTabChange, selectedAircraft }: SidebarProps) {
   const { data: flightStatus } = useQuery<FlightStatus>({
     queryKey: ["/api/flight-status"],
   });

@@ -1,7 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { insertAnnouncementSchema, insertChecklistSchema, insertNoteSchema, insertFlightStatusSchema } from "@shared/schema";
+import { atc24Client } from "./atc24-client";
+import { EnhancedAircraft } from "@shared/atc24-types";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -222,6 +225,156 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Demo aircraft data for development
+  const getDemoAircraft = () => [
+    {
+      callsign: "UAL123",
+      pilot: "Captain Smith",
+      aircraft: "Boeing 737-800",
+      altitude: 37000,
+      groundSpeed: 480,
+      heading: 95,
+      latitude: 40.7128,
+      longitude: -74.0060,
+      phase: "cruise",
+      route: "KJFK-KLAX",
+      wind: "270/15",
+      lastUpdate: new Date().toISOString()
+    },
+    {
+      callsign: "DLH456",
+      pilot: "Captain Mueller",
+      aircraft: "Airbus A320",
+      altitude: 12000,
+      groundSpeed: 250,
+      heading: 180,
+      latitude: 52.5200,
+      longitude: 13.4050,
+      phase: "descent",
+      route: "EDDF-EGLL",
+      wind: "240/12",
+      lastUpdate: new Date().toISOString()
+    },
+    {
+      callsign: "BAW789",
+      pilot: "Captain Wilson",
+      aircraft: "Boeing 777-300ER",
+      altitude: 2500,
+      groundSpeed: 180,
+      heading: 270,
+      latitude: 51.4700,
+      longitude: -0.4543,
+      phase: "approach",
+      route: "EGLL-KJFK",
+      wind: "260/18",
+      lastUpdate: new Date().toISOString()
+    }
+  ];
+
+  // ATC 24 Routes
+  app.get("/api/aircraft", async (req, res) => {
+    try {
+      let aircraft = atc24Client.getAllAircraft();
+      
+      // If no real data available, use demo data
+      if (aircraft.length === 0) {
+        aircraft = getDemoAircraft();
+      }
+      
+      res.json(aircraft);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch aircraft data" });
+    }
+  });
+
+  app.get("/api/aircraft/:callsign", async (req, res) => {
+    try {
+      const { callsign } = req.params;
+      const aircraft = atc24Client.getAircraft(callsign);
+      if (aircraft) {
+        res.json(aircraft);
+      } else {
+        res.status(404).json({ message: "Aircraft not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch aircraft data" });
+    }
+  });
+
+  app.get("/api/controllers", async (req, res) => {
+    try {
+      const controllers = atc24Client.getControllers();
+      res.json(controllers);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch controller data" });
+    }
+  });
+
+  app.get("/api/atc24/status", async (req, res) => {
+    try {
+      const status = {
+        connected: atc24Client.isConnectedToATC24(),
+        aircraftCount: atc24Client.getAllAircraft().length,
+        controllersCount: atc24Client.getControllers().length,
+        lastUpdate: new Date()
+      };
+      res.json(status);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch ATC 24 status" });
+    }
+  });
+
   const httpServer = createServer(app);
+
+  // WebSocket server for real-time updates
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  const clients = new Set<WebSocket>();
+
+  wss.on('connection', (ws: WebSocket) => {
+    clients.add(ws);
+    console.log('Client connected to WebSocket');
+
+    // Send initial data
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'aircraft',
+        data: atc24Client.getAllAircraft()
+      }));
+    }
+
+    ws.on('close', () => {
+      clients.delete(ws);
+      console.log('Client disconnected from WebSocket');
+    });
+
+    ws.on('error', (error) => {
+      console.error('WebSocket error:', error);
+      clients.delete(ws);
+    });
+  });
+
+  // Broadcast updates to all connected clients
+  function broadcastToClients(type: string, data: any) {
+    const message = JSON.stringify({ type, data });
+    clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  }
+
+  // Listen for ATC 24 updates
+  atc24Client.on('aircraftUpdate', (aircraft: EnhancedAircraft[]) => {
+    broadcastToClients('aircraft', aircraft);
+  });
+
+  atc24Client.on('controllersUpdate', (controllers) => {
+    broadcastToClients('controllers', controllers);
+  });
+
+  atc24Client.on('flightPlanUpdate', (flightPlan) => {
+    broadcastToClients('flightPlan', flightPlan);
+  });
+
   return httpServer;
 }
