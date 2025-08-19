@@ -2,9 +2,10 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
-import { insertAnnouncementSchema, insertChecklistSchema, insertNoteSchema, insertFlightStatusSchema } from "@shared/schema";
+import { insertAnnouncementSchema, insertChecklistSchema, insertNoteSchema, insertFlightStatusSchema, insertWeightBalanceSchema } from "@shared/schema";
 import { atc24Client } from "./atc24-client";
 import { EnhancedAircraft } from "@shared/atc24-types";
+import { elevenLabsService } from "./elevenlabs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -225,21 +226,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ElevenLabs TTS routes
+  app.get("/api/voices", async (req, res) => {
+    try {
+      const voices = await elevenLabsService.getVoices();
+      res.json(voices);
+    } catch (error) {
+      console.error('Failed to fetch voices:', error);
+      res.status(500).json({ message: "Failed to fetch voices from ElevenLabs" });
+    }
+  });
+
+  app.post("/api/tts", async (req, res) => {
+    try {
+      const { text, voice_id } = req.body;
+      if (!text || !voice_id) {
+        return res.status(400).json({ message: "Text and voice_id are required" });
+      }
+
+      const audioBuffer = await elevenLabsService.generateSpeech({
+        text,
+        voice_id,
+        voice_settings: {
+          stability: 0.7,
+          similarity_boost: 0.8,
+          style: 0.1,
+          use_speaker_boost: true,
+        },
+      });
+
+      res.set({
+        'Content-Type': 'audio/mpeg',
+        'Content-Length': audioBuffer.length.toString(),
+      });
+      res.send(audioBuffer);
+    } catch (error) {
+      console.error('Failed to generate speech:', error);
+      res.status(500).json({ message: "Failed to generate speech" });
+    }
+  });
+
+  // Weight and balance routes
+  app.get("/api/weight-balance/:aircraftType", async (req, res) => {
+    try {
+      const { aircraftType } = req.params;
+      const weightData = await storage.getWeightBalance(aircraftType);
+      res.json(weightData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch weight and balance data" });
+    }
+  });
+
+  app.post("/api/weight-balance", async (req, res) => {
+    try {
+      const validatedData = insertWeightBalanceSchema.parse(req.body);
+      const weightData = await storage.createWeightBalance(validatedData);
+      res.status(201).json(weightData);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid weight and balance data" });
+    }
+  });
+
   // Demo aircraft data for development
-  const getDemoAircraft = () => [
+  const getDemoAircraft = (): EnhancedAircraft[] => [
     {
       callsign: "UAL123",
       pilot: "Captain Smith",
       aircraft: "Boeing 737-800",
       altitude: 37000,
       groundSpeed: 480,
+      speed: 480,
       heading: 95,
       latitude: 40.7128,
       longitude: -74.0060,
       phase: "cruise",
       route: "KJFK-KLAX",
       wind: "270/15",
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
+      position: { x: -74.0060, y: 40.7128 },
+      isOnGround: false
     },
     {
       callsign: "DLH456",
@@ -247,13 +312,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       aircraft: "Airbus A320",
       altitude: 12000,
       groundSpeed: 250,
+      speed: 250,
       heading: 180,
       latitude: 52.5200,
       longitude: 13.4050,
       phase: "descent",
       route: "EDDF-EGLL",
       wind: "240/12",
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
+      position: { x: 13.4050, y: 52.5200 },
+      isOnGround: false
     },
     {
       callsign: "BAW789",
@@ -261,13 +329,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       aircraft: "Boeing 777-300ER",
       altitude: 2500,
       groundSpeed: 180,
+      speed: 180,
       heading: 270,
       latitude: 51.4700,
       longitude: -0.4543,
       phase: "approach",
       route: "EGLL-KJFK",
       wind: "260/18",
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
+      position: { x: -0.4543, y: 51.4700 },
+      isOnGround: false
     }
   ];
 
@@ -377,11 +448,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     broadcastToClients('aircraft', aircraft);
   });
 
-  atc24Client.on('controllersUpdate', (controllers) => {
+  atc24Client.on('controllersUpdate', (controllers: any) => {
     broadcastToClients('controllers', controllers);
   });
 
-  atc24Client.on('flightPlanUpdate', (flightPlan) => {
+  atc24Client.on('flightPlanUpdate', (flightPlan: any) => {
     broadcastToClients('flightPlan', flightPlan);
   });
 

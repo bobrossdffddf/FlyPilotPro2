@@ -2,17 +2,17 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
 import { EnhancedAircraft } from "@shared/atc24-types";
-import Sidebar from "@/components/layout/sidebar";
-import AnnouncementsTab from "@/components/tabs/announcements-tab";
+import { TabsHeader } from "@/components/ui/tabs-header";
+import EnhancedAnnouncementsTab from "@/components/tabs/enhanced-announcements-tab";
 import ChartsTab from "@/components/tabs/charts-tab";
 import SidsTab from "@/components/tabs/sids-tab";
 import NotepadTab from "@/components/tabs/notepad-tab";
-import ChecklistsTab from "@/components/tabs/checklists-tab";
-import WeightBalanceTab from "@/components/tabs/weight-balance-tab";
-import VirtualMicTab from "@/components/tabs/virtual-mic-tab";
+import EnhancedChecklistsTab from "@/components/tabs/enhanced-checklists-tab";
+import EnhancedWeightBalanceTab from "@/components/tabs/enhanced-weight-balance-tab";
+import InstrumentsTab from "@/components/tabs/instruments-tab";
 import FlightHeader from "@/components/layout/flight-header";
 
-type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | "weight" | "virtuemic";
+type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | "weight" | "instruments";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("announcements");
@@ -39,7 +39,7 @@ export default function Dashboard() {
   const renderActiveTab = () => {
     switch (activeTab) {
       case "announcements":
-        return <AnnouncementsTab />;
+        return <EnhancedAnnouncementsTab />;
       case "charts":
         return <ChartsTab />;
       case "sids":
@@ -47,13 +47,13 @@ export default function Dashboard() {
       case "notepad":
         return <NotepadTab />;
       case "checklists":
-        return <ChecklistsTab />;
+        return <EnhancedChecklistsTab />;
       case "weight":
-        return <WeightBalanceTab />;
-      case "virtuemic":
-        return <VirtualMicTab />;
+        return <EnhancedWeightBalanceTab />;
+      case "instruments":
+        return <InstrumentsTab />;
       default:
-        return <AnnouncementsTab />;
+        return <EnhancedAnnouncementsTab />;
     }
   };
 
@@ -77,24 +77,18 @@ export default function Dashboard() {
       className="min-h-screen flex flex-col bg-cockpit-dark"
     >
       <FlightHeader aircraft={selectedAircraft} />
-      <div className="flex-1 flex">
-        <Sidebar 
-          activeTab={activeTab} 
-          onTabChange={setActiveTab}
-          selectedAircraft={selectedAircraft}
-        />
-        <main className="flex-1 overflow-hidden">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-            className="h-full"
-          >
-            {renderActiveTab()}
-          </motion.div>
-        </main>
-      </div>
+      <TabsHeader activeTab={activeTab} onTabChange={setActiveTab} />
+      <main className="flex-1 overflow-hidden">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="h-full"
+        >
+          {renderActiveTab()}
+        </motion.div>
+      </main>
     </motion.div>
   );
 }

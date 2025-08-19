@@ -10,7 +10,9 @@ import {
   type Sid,
   type InsertSid,
   type FlightStatus,
-  type InsertFlightStatus
+  type InsertFlightStatus,
+  type WeightBalance,
+  type InsertWeightBalance
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -52,6 +54,10 @@ export interface IStorage {
   // Flight Status
   getCurrentFlightStatus(): Promise<FlightStatus | undefined>;
   updateFlightStatus(status: InsertFlightStatus): Promise<FlightStatus>;
+
+  // Weight and Balance
+  getWeightBalance(aircraftType: string): Promise<WeightBalance | undefined>;
+  createWeightBalance(weightBalance: InsertWeightBalance): Promise<WeightBalance>;
 }
 
 export class MemStorage implements IStorage {
@@ -61,6 +67,7 @@ export class MemStorage implements IStorage {
   private charts: Map<string, Chart> = new Map();
   private sids: Map<string, Sid> = new Map();
   private flightStatus: Map<string, FlightStatus> = new Map();
+  private weightBalance: Map<string, WeightBalance> = new Map();
 
   constructor() {
     this.initializeDefaultData();
@@ -344,6 +351,22 @@ export class MemStorage implements IStorage {
     };
     this.flightStatus.set(id, status);
     return status;
+  }
+
+  // Weight and Balance
+  async getWeightBalance(aircraftType: string): Promise<WeightBalance | undefined> {
+    return Array.from(this.weightBalance.values()).find(wb => wb.aircraftType === aircraftType);
+  }
+
+  async createWeightBalance(insertWeightBalance: InsertWeightBalance): Promise<WeightBalance> {
+    const id = randomUUID();
+    const weightBalance: WeightBalance = {
+      ...insertWeightBalance,
+      id,
+      createdAt: new Date(),
+    };
+    this.weightBalance.set(id, weightBalance);
+    return weightBalance;
   }
 }
 
