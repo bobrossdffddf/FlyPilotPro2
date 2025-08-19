@@ -114,7 +114,7 @@ export default function FlightSelection() {
                 <i className="fas fa-plane text-white text-xl"></i>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-text-primary">24FLY Flight Management</h1>
+                <h1 className="text-2xl font-bold text-text-primary">24FLY</h1>
                 <p className="text-text-secondary">Professional Aviation Assistant</p>
               </div>
             </div>
