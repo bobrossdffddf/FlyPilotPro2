@@ -1,3 +1,6 @@
+console.log("ELEVENLABS_API_KEY present?", !!process.env.ELEVENLABS_API_KEY);
+
+
 import dotenv from "dotenv";
 
 // Load environment variables from .env file
