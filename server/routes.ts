@@ -271,13 +271,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   ];
 
+  // Demo mode toggle
+  let forceDemo = false;
+  
+  app.post("/api/demo-mode", (req, res) => {
+    forceDemo = req.body.enabled;
+    console.log(`Demo mode ${forceDemo ? 'enabled' : 'disabled'}`);
+    res.json({ demoMode: forceDemo, message: `Demo mode ${forceDemo ? 'enabled' : 'disabled'}` });
+  });
+
   // ATC 24 Routes
   app.get("/api/aircraft", async (req, res) => {
     try {
       let aircraft = atc24Client.getAllAircraft();
       
-      // If no real data available, use demo data
-      if (aircraft.length === 0) {
+      // If no real data available or demo mode forced, use demo data
+      if (aircraft.length === 0 || forceDemo) {
         aircraft = getDemoAircraft();
       }
       
