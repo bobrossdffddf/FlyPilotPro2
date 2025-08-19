@@ -123,7 +123,8 @@ export default function EnhancedAnnouncementsTab() {
 
   const { 
     voices, 
-    isLoading, 
+    isLoading,
+    isSupported, 
     currentAudio, 
     fetchVoices, 
     generateSpeech, 
@@ -175,6 +176,15 @@ export default function EnhancedAnnouncementsTab() {
       toast({
         title: "Voice Not Available",
         description: "Please ensure natural voices are loaded",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!isSupported) {
+      toast({
+        title: "TTS Loading",
+        description: "Text-to-speech service is still loading...",
         variant: "destructive"
       });
       return;

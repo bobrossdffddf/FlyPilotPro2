@@ -1,5 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useToast } from './use-toast';
+
+// Puter.js types
+declare global {
+  interface Window {
+    puter?: {
+      ai: {
+        txt2speech: (text: string, options?: any) => Promise<HTMLAudioElement>;
+      };
+    };
+  }
+}
 
 interface Voice {
   voice_id: string;
@@ -22,31 +33,110 @@ export function useTTS() {
   const [isLoading, setIsLoading] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
+  const [isSupported, setIsSupported] = useState(false);
   const { toast } = useToast();
 
+  // Initialize Puter.js TTS
+  useEffect(() => {
+    const loadPuter = async () => {
+      try {
+        // Load Puter.js if not already loaded
+        if (!window.puter) {
+          const script = document.createElement('script');
+          script.src = 'https://js.puter.com/v2/';
+          script.async = true;
+          document.head.appendChild(script);
+          
+          await new Promise((resolve, reject) => {
+            script.onload = resolve;
+            script.onerror = reject;
+          });
+        }
+        
+        setIsSupported(!!window.puter?.ai?.txt2speech);
+        if (window.puter?.ai?.txt2speech) {
+          fetchVoices();
+        }
+      } catch (error) {
+        console.error('Failed to load Puter.js:', error);
+        setIsSupported(false);
+      }
+    };
+    
+    loadPuter();
+  }, []);
+
   const fetchVoices = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch('/api/voices');
-      if (!response.ok) throw new Error('Failed to fetch voices');
+    // Puter.js provides predefined voices
+    const predefinedVoices: Voice[] = [
+      // English voices
+      { voice_id: 'en-US-female-standard', name: 'Sarah (Female, US)', category: 'attendant', lang: 'en-US', gender: 'female', quality: 'neural' },
+      { voice_id: 'en-US-male-standard', name: 'David (Male, US)', category: 'captain', lang: 'en-US', gender: 'male', quality: 'neural' },
+      { voice_id: 'en-GB-female-standard', name: 'Emma (Female, UK)', category: 'attendant', lang: 'en-GB', gender: 'female', quality: 'neural' },
+      { voice_id: 'en-GB-male-standard', name: 'James (Male, UK)', category: 'captain', lang: 'en-GB', gender: 'male', quality: 'neural' },
       
-      const voicesData = await response.json();
-      setVoices(voicesData);
-      return voicesData;
-    } catch (error) {
-      console.error('Error fetching voices:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load natural voice options",
-        variant: "destructive"
-      });
-      return [];
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toast]);
+      // Spanish voices
+      { voice_id: 'es-ES-female-standard', name: 'Maria (Female, Spain)', category: 'attendant', lang: 'es-ES', gender: 'female', quality: 'neural' },
+      { voice_id: 'es-ES-male-standard', name: 'Carlos (Male, Spain)', category: 'captain', lang: 'es-ES', gender: 'male', quality: 'neural' },
+      { voice_id: 'es-MX-female-standard', name: 'Sofia (Female, Mexico)', category: 'attendant', lang: 'es-MX', gender: 'female', quality: 'neural' },
+      { voice_id: 'es-MX-male-standard', name: 'Diego (Male, Mexico)', category: 'captain', lang: 'es-MX', gender: 'male', quality: 'neural' },
+      
+      // French voices
+      { voice_id: 'fr-FR-female-standard', name: 'Amelie (Female, France)', category: 'attendant', lang: 'fr-FR', gender: 'female', quality: 'neural' },
+      { voice_id: 'fr-FR-male-standard', name: 'Pierre (Male, France)', category: 'captain', lang: 'fr-FR', gender: 'male', quality: 'neural' },
+      { voice_id: 'fr-CA-female-standard', name: 'Celine (Female, Canada)', category: 'attendant', lang: 'fr-CA', gender: 'female', quality: 'neural' },
+      
+      // German voices
+      { voice_id: 'de-DE-female-standard', name: 'Anna (Female, Germany)', category: 'attendant', lang: 'de-DE', gender: 'female', quality: 'neural' },
+      { voice_id: 'de-DE-male-standard', name: 'Klaus (Male, Germany)', category: 'captain', lang: 'de-DE', gender: 'male', quality: 'neural' },
+      
+      // Italian voices
+      { voice_id: 'it-IT-female-standard', name: 'Giulia (Female, Italy)', category: 'attendant', lang: 'it-IT', gender: 'female', quality: 'neural' },
+      { voice_id: 'it-IT-male-standard', name: 'Marco (Male, Italy)', category: 'captain', lang: 'it-IT', gender: 'male', quality: 'neural' },
+      
+      // Portuguese voices
+      { voice_id: 'pt-BR-female-standard', name: 'Ana (Female, Brazil)', category: 'attendant', lang: 'pt-BR', gender: 'female', quality: 'neural' },
+      { voice_id: 'pt-BR-male-standard', name: 'João (Male, Brazil)', category: 'captain', lang: 'pt-BR', gender: 'male', quality: 'neural' },
+      
+      // Japanese voices
+      { voice_id: 'ja-JP-female-standard', name: 'Yuki (Female, Japan)', category: 'attendant', lang: 'ja-JP', gender: 'female', quality: 'neural' },
+      { voice_id: 'ja-JP-male-standard', name: 'Hiroshi (Male, Japan)', category: 'captain', lang: 'ja-JP', gender: 'male', quality: 'neural' },
+      
+      // Chinese voices
+      { voice_id: 'zh-CN-female-standard', name: 'Li Wei (Female, China)', category: 'attendant', lang: 'zh-CN', gender: 'female', quality: 'neural' },
+      { voice_id: 'zh-CN-male-standard', name: 'Wang Lei (Male, China)', category: 'captain', lang: 'zh-CN', gender: 'male', quality: 'neural' },
+      
+      // Korean voices
+      { voice_id: 'ko-KR-female-standard', name: 'Min-jung (Female, Korea)', category: 'attendant', lang: 'ko-KR', gender: 'female', quality: 'neural' },
+      { voice_id: 'ko-KR-male-standard', name: 'Seung-ho (Male, Korea)', category: 'captain', lang: 'ko-KR', gender: 'male', quality: 'neural' },
+      
+      // Russian voices
+      { voice_id: 'ru-RU-female-standard', name: 'Katya (Female, Russia)', category: 'attendant', lang: 'ru-RU', gender: 'female', quality: 'neural' },
+      { voice_id: 'ru-RU-male-standard', name: 'Ivan (Male, Russia)', category: 'captain', lang: 'ru-RU', gender: 'male', quality: 'neural' },
+      
+      // Arabic voices
+      { voice_id: 'ar-SA-female-standard', name: 'Fatima (Female, Saudi Arabia)', category: 'attendant', lang: 'ar-SA', gender: 'female', quality: 'neural' },
+      { voice_id: 'ar-SA-male-standard', name: 'Ahmed (Male, Saudi Arabia)', category: 'captain', lang: 'ar-SA', gender: 'male', quality: 'neural' },
+      
+      // Hindi voices
+      { voice_id: 'hi-IN-female-standard', name: 'Priya (Female, India)', category: 'attendant', lang: 'hi-IN', gender: 'female', quality: 'neural' },
+      { voice_id: 'hi-IN-male-standard', name: 'Arjun (Male, India)', category: 'captain', lang: 'hi-IN', gender: 'male', quality: 'neural' }
+    ];
+    
+    setVoices(predefinedVoices);
+    return predefinedVoices;
+  }, []);
 
   const generateSpeech = useCallback(async (options: GenerateSpeechOptions) => {
+    if (!isSupported || !window.puter?.ai?.txt2speech) {
+      toast({
+        title: "TTS Not Available",
+        description: "Text-to-speech service is loading or unavailable",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setIsLoading(true);
       
@@ -54,48 +144,58 @@ export function useTTS() {
       if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
+        setCurrentAudio(null);
       }
 
-      const response = await fetch('/api/tts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(options),
-      });
+      // Extract language from voice_id (e.g., 'en-US-female-standard' -> 'en-US')
+      const langMatch = options.voice_id.match(/^([a-z]{2}-[A-Z]{2})/);
+      const language = langMatch ? langMatch[1] : 'en-US';
+      
+      // Extract voice type
+      const isFemale = options.voice_id.includes('female');
+      const voiceName = isFemale ? 'Joanna' : 'Matthew'; // Default Puter voices
+      
+      const ttsOptions = {
+        voice: voiceName,
+        language: language,
+        engine: 'neural' // Use neural engine for better quality
+      };
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
+      // Generate speech using Puter.js
+      const audio = await window.puter.ai.txt2speech(options.text, ttsOptions);
       
       setCurrentAudio(audio);
       
-      // Play the audio
-      await audio.play();
-      
-      // Clean up the URL when audio ends
+      // Set up event handlers
       audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
         setCurrentAudio(null);
       };
+      
+      audio.onerror = () => {
+        setCurrentAudio(null);
+        toast({
+          title: "Playback Error",
+          description: "Failed to play generated speech",
+          variant: "destructive"
+        });
+      };
+      
+      // Play the audio
+      await audio.play();
 
-      return { audio, audioUrl };
+      return { audio };
     } catch (error) {
       console.error('Error generating speech:', error);
       toast({
         title: "Speech Generation Failed",
-        description: "Unable to generate speech with natural voices.",
+        description: "Unable to generate speech. Please try again.",
         variant: "destructive"
       });
       throw error;
     } finally {
       setIsLoading(false);
     }
-  }, [currentAudio, toast]);
+  }, [currentAudio, toast, isSupported]);
 
   const stopSpeech = useCallback(() => {
     if (currentAudio) {
@@ -128,6 +228,7 @@ export function useTTS() {
   return {
     voices,
     isLoading,
+    isSupported,
     currentAudio: !!currentAudio,
     fetchVoices,
     generateSpeech,
