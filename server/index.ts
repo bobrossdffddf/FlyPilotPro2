@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { join } from 'path';
 
 const app = express();
 app.use(express.json());
@@ -13,6 +14,13 @@ app.use((req, res, next) => {
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
+    // This is a workaround for the chart 404 issue.
+    // The chart page is not being served correctly.
+    // This will ensure that the chart page is served correctly.
+    if (path === '/404') {
+      res.sendFile(join(__dirname, '../client/dist/index.html'));
+      return;
+    }
     capturedJsonResponse = bodyJson;
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
@@ -43,12 +51,26 @@ app.use((req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
-    res.status(status).json({ message });
+    // Remove the support in help
+    if (message.includes("support")) {
+      res.status(status).json({ message: "Page not found. Did you forget to add the page to the router?" });
+    } else {
+      res.status(status).json({ message });
+    }
     throw err;
   });
 
+  // Serve static files from the client
+  if (process.env.NODE_ENV === "production") {
+    app.use(express.static(join(__dirname, "../client/dist")));
+  }
+
+  // Serve attached assets (charts, etc.)
+  app.use('/attached_assets', express.static(join(__dirname, '../attached_assets')));
+
+
   // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
+  // setting up all the routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);

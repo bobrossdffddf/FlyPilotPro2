@@ -6,13 +6,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { FileText } from "lucide-react";
 
 export default function NotepadTab() {
   const [currentNote, setCurrentNote] = useState<Note | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [flightNumber, setFlightNumber] = useState("");
-  
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -126,11 +127,21 @@ export default function NotepadTab() {
     <div className="h-full">
       <header className="bg-panel-bg border-b border-panel-gray p-6">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold text-text-primary" data-testid="page-title">
-              Digital Notepad
-            </h2>
-            <p className="text-text-muted mt-1">Flight notes and observations</p>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-text-primary/20">
+              <FileText className="text-text-primary" size={24} />
+            </div>
+            <div>
+              <h2 className="text-2xl font-semibold text-text-primary">
+                Flight Log
+                <span className="ml-2 px-2 py-1 text-xs bg-warning-orange/20 text-warning-orange rounded-lg">
+                  UNDER DEV
+                </span>
+              </h2>
+              <p className="text-text-muted">
+                Digital notepad for flight planning and notes
+              </p>
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             <Button
@@ -228,7 +239,7 @@ export default function NotepadTab() {
                 />
               </div>
             </div>
-            
+
             <div className="flex-1">
               <label className="block text-sm font-medium text-text-secondary mb-2">
                 Content
@@ -241,7 +252,7 @@ export default function NotepadTab() {
                 data-testid="textarea-note-content"
               />
             </div>
-            
+
             {(createNoteMutation.isPending || updateNoteMutation.isPending) && (
               <div className="mt-2 text-sm text-aviation-blue" data-testid="saving-indicator">
                 <i className="fas fa-spinner fa-spin mr-2"></i>

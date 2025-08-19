@@ -50,12 +50,12 @@ const helpSections = [
     title: "SIDs/STARs",
     icon: Route,
     color: "text-caution-yellow",
-    description: "Standard Instrument Departures and Arrivals database",
+    description: "Coming Soon - Under Development",
     features: [
-      "Comprehensive SID and STAR procedures",
-      "Search by airport code",
-      "Interactive procedure displays",
-      "Coming soon - under development"
+      "Feature under development",
+      "Will include comprehensive procedures",
+      "Airport-specific routing",
+      "Interactive displays planned"
     ]
   },
   {
@@ -102,12 +102,12 @@ const helpSections = [
     title: "Flight Instruments",
     icon: Gauge,
     color: "text-nav-green",
-    description: "Cockpit instruments and displays",
+    description: "Coming Soon - Under Development",
     features: [
-      "Primary flight displays",
-      "Navigation displays",
-      "Engine monitoring",
-      "Coming soon - under development"
+      "Feature under development",
+      "Will include primary flight displays",
+      "Navigation displays planned",
+      "Engine monitoring coming"
     ]
   }
 ];
@@ -265,7 +265,7 @@ export default function HelpTab() {
               <CardTitle className="text-text-primary">System Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center">
                   <Badge variant="outline" className="mb-2">Version</Badge>
                   <p className="text-sm text-text-secondary">v2.1.0</p>
@@ -275,15 +275,8 @@ export default function HelpTab() {
                   <p className="text-sm text-nav-green">Online</p>
                 </div>
                 <div className="text-center">
-                  <Badge variant="outline" className="mb-2">Build</Badge>
-                  <p className="text-sm text-text-secondary">Production</p>
-                </div>
-                <div className="text-center">
-                  <Badge variant="outline" className="mb-2">Support</Badge>
-                  <Button variant="ghost" size="sm" className="h-6 text-aviation-blue">
-                    <ExternalLink size={12} className="mr-1" />
-                    Contact
-                  </Button>
+                  <Badge variant="outline" className="mb-2">Demo</Badge>
+                  <p className="text-sm text-text-secondary">Live Demo</p>
                 </div>
               </div>
             </CardContent>

@@ -1,3 +1,4 @@
+import Gauge from "./Gauge"; // Assuming Gauge component is in the same directory
 
 export default function InstrumentsTab() {
   return (
@@ -7,19 +8,22 @@ export default function InstrumentsTab() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-nav-green/20">
-              <i className="fas fa-cog text-nav-green" />
+              <Gauge className="text-nav-green" size={24} />
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-text-primary">
-                Instruments
-              </h2>
-              <p className="text-text-muted">
-                Flight instruments and displays
-              </p>
-            </div>
+                Flight Instruments
+              <span className="ml-2 px-2 py-1 text-xs bg-warning-orange/20 text-warning-orange rounded-lg">
+                UNDER DEV
+              </span>
+            </h2>
+            <p className="text-text-muted">
+              Real-time cockpit instrument displays
+            </p>
           </div>
         </div>
       </div>
+    </div>
 
       {/* Coming Soon Message */}
       <div className="flex-1 flex items-center justify-center">

@@ -17,15 +17,15 @@ export default function SidsTab() {
           >
             <i className="fas fa-route text-8xl text-aviation-blue"></i>
           </motion.div>
-          
+
           <h2 className="text-3xl font-bold text-text-primary mb-4">
             SIDs Database
           </h2>
-          
+
           <p className="text-lg text-text-secondary mb-6">
             Standard Instrument Departures
           </p>
-          
+
           <motion.div
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
@@ -41,7 +41,7 @@ export default function SidsTab() {
               waypoint information, and real-time updates.
             </p>
           </motion.div>
-          
+
           <motion.div
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
