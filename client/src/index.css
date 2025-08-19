@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cockpit-dark: hsl(215, 28%, 7%);
+  --panel-bg: hsl(215, 25%, 11%);
+  --panel-gray: hsl(0, 0%, 20%);
+  --aviation-blue: hsl(210, 100%, 40%);
+  --warning-orange: hsl(38, 100%, 50%);
+  --nav-green: hsl(120, 100%, 50%);
+  --caution-yellow: hsl(60, 100%, 50%);
+  --text-primary: hsl(0, 0%, 100%);
+  --text-secondary: hsl(0, 0%, 80%);
+  --text-muted: hsl(218, 11%, 65%);
+  
+  --background: var(--cockpit-dark);
+  --foreground: var(--text-primary);
+  --card: var(--panel-bg);
+  --card-foreground: var(--text-primary);
+  --popover: var(--panel-bg);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--aviation-blue);
+  --primary-foreground: var(--text-primary);
+  --secondary: var(--panel-gray);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--panel-gray);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--aviation-blue);
+  --accent-foreground: var(--text-primary);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: var(--text-primary);
+  --border: var(--panel-gray);
+  --input: var(--panel-gray);
+  --ring: var(--aviation-blue);
+  --radius: 0.5rem;
+  
+  --font-inter: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+.dark {
+  --cockpit-dark: hsl(215, 28%, 7%);
+  --panel-bg: hsl(215, 25%, 11%);
+  --panel-gray: hsl(0, 0%, 20%);
+  --aviation-blue: hsl(210, 100%, 40%);
+  --warning-orange: hsl(38, 100%, 50%);
+  --nav-green: hsl(120, 100%, 50%);
+  --caution-yellow: hsl(60, 100%, 50%);
+  --text-primary: hsl(0, 0%, 100%);
+  --text-secondary: hsl(0, 0%, 80%);
+  --text-muted: hsl(218, 11%, 65%);
+  
+  --background: var(--cockpit-dark);
+  --foreground: var(--text-primary);
+  --card: var(--panel-bg);
+  --card-foreground: var(--text-primary);
+  --popover: var(--panel-bg);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--aviation-blue);
+  --primary-foreground: var(--text-primary);
+  --secondary: var(--panel-gray);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--panel-gray);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--aviation-blue);
+  --accent-foreground: var(--text-primary);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: var(--text-primary);
+  --border: var(--panel-gray);
+  --input: var(--panel-gray);
+  --ring: var(--aviation-blue);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply font-inter antialiased text-foreground;
+    background-color: var(--cockpit-dark);
+  }
+
+  .font-inter {
+    font-family: var(--font-inter);
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  .text-cockpit-dark {
+    color: var(--cockpit-dark);
+  }
+  
+  .bg-cockpit-dark {
+    background-color: var(--cockpit-dark);
+  }
+  
+  .bg-panel-bg {
+    background-color: var(--panel-bg);
+  }
+  
+  .bg-panel-gray {
+    background-color: var(--panel-gray);
+  }
+  
+  .text-aviation-blue {
+    color: var(--aviation-blue);
+  }
+  
+  .bg-aviation-blue {
+    background-color: var(--aviation-blue);
+  }
+  
+  .text-warning-orange {
+    color: var(--warning-orange);
+  }
+  
+  .bg-warning-orange {
+    background-color: var(--warning-orange);
+  }
+  
+  .text-nav-green {
+    color: var(--nav-green);
+  }
+  
+  .bg-nav-green {
+    background-color: var(--nav-green);
+  }
+  
+  .text-caution-yellow {
+    color: var(--caution-yellow);
+  }
+  
+  .bg-caution-yellow {
+    background-color: var(--caution-yellow);
+  }
+  
+  .text-text-primary {
+    color: var(--text-primary);
+  }
+  
+  .text-text-secondary {
+    color: var(--text-secondary);
+  }
+  
+  .text-text-muted {
+    color: var(--text-muted);
+  }
+  
+  .shadow-cockpit {
+    box-shadow: 0 0 20px rgba(0, 102, 204, 0.3);
+  }
+  
+  .shadow-panel {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  .shadow-instrument {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  }
+
+  .border-aviation-blue {
+    border-color: var(--aviation-blue);
+  }
+
+  .border-panel-gray {
+    border-color: var(--panel-gray);
+  }
+}
