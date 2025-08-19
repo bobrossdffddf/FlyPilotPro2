@@ -189,22 +189,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           fileUrl: "/attached_assets/charts/IRFD_CHART_TYPE_GROUND.svg",
           createdAt: new Date().toISOString()
         }
-          title: "EDDM Munich SID TOBAK 1F",
-          airportCode: "EDDM",
-          chartType: "SID Chart",
-          fileName: "eddm_sid_tobak1f.pdf",
-          fileUrl: "https://www.dfs.de/dfs_homepage/de/Services/Customer%20Relations/Aeronautical%20Services/Electronic%20AIP/eAIP/",
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: "6",
-          title: "LFPG Charles de Gaulle STAR",
-          airportCode: "LFPG",
-          chartType: "STAR Chart", 
-          fileName: "lfpg_star_mopar.pdf",
-          fileUrl: "https://www.sia.aviation-civile.gouv.fr/",
-          createdAt: new Date().toISOString()
-        }
       ];
       
       res.json(charts);
