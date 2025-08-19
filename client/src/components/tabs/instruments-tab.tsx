@@ -1,4 +1,4 @@
-import Gauge from "./Gauge"; // Assuming Gauge component is in the same directory
+import { Gauge } from "lucide-react";
 
 export default function InstrumentsTab() {
   return (
@@ -20,10 +20,10 @@ export default function InstrumentsTab() {
             <p className="text-text-muted">
               Real-time cockpit instrument displays
             </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
       {/* Coming Soon Message */}
       <div className="flex-1 flex items-center justify-center">
