@@ -145,24 +145,31 @@ export default function FlightSelection() {
           <p className="text-text-secondary">Choose a flight to begin assistance</p>
         </div>
 
-        {!status?.connected ? (
+        {aircraft.length === 0 ? (
           <div className="bg-panel-bg rounded-2xl border border-panel-gray p-12 text-center">
-            <i className="fas fa-wifi text-6xl text-text-muted mb-6"></i>
-            <h3 className="text-xl font-semibold text-text-primary mb-4">Connecting to ATC 24</h3>
-            <p className="text-text-secondary mb-6">Establishing connection to live flight data...</p>
-            <div className="w-64 h-2 bg-panel-gray rounded-full mx-auto">
-              <motion.div
-                animate={{ x: [-64, 64, -64] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="w-16 h-2 bg-aviation-blue rounded-full"
-              />
-            </div>
-          </div>
-        ) : aircraft.length === 0 ? (
-          <div className="bg-panel-bg rounded-2xl border border-panel-gray p-12 text-center">
-            <i className="fas fa-plane-slash text-6xl text-text-muted mb-6"></i>
-            <h3 className="text-xl font-semibold text-text-primary mb-4">No Active Flights</h3>
-            <p className="text-text-secondary">No aircraft currently online in ATC 24</p>
+            {!status?.connected ? (
+              <>
+                <i className="fas fa-wifi text-6xl text-text-muted mb-6"></i>
+                <h3 className="text-xl font-semibold text-text-primary mb-4">Connecting to ATC 24</h3>
+                <p className="text-text-secondary mb-6">Establishing connection to live flight data...</p>
+                <div className="w-64 h-2 bg-panel-gray rounded-full mx-auto mb-4">
+                  <motion.div
+                    animate={{ x: [-64, 64, -64] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-16 h-2 bg-aviation-blue rounded-full"
+                  />
+                </div>
+                <p className="text-xs text-text-muted">
+                  Use demo mode console command to bypass network issues
+                </p>
+              </>
+            ) : (
+              <>
+                <i className="fas fa-plane-slash text-6xl text-text-muted mb-6"></i>
+                <h3 className="text-xl font-semibold text-text-primary mb-4">No Active Flights</h3>
+                <p className="text-text-secondary">No aircraft currently online in ATC 24</p>
+              </>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
