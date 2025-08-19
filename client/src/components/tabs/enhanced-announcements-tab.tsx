@@ -119,7 +119,8 @@ export default function EnhancedAnnouncementsTab() {
   const [dualLanguage, setDualLanguage] = useState(false);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [showVirtualMicHelp, setShowVirtualMicHelp] = useState(false);
-  
+  const [currentVoiceIndex, setCurrentVoiceIndex] = useState(0); // State to track the current voice index
+
   const { 
     voices, 
     isLoading, 
@@ -181,9 +182,9 @@ export default function EnhancedAnnouncementsTab() {
 
     try {
       setPlayingId(announcement.id);
-      
+
       let textToSpeak = announcement.text;
-      
+
       // Add dual language support
       if (dualLanguage && selectedAirline?.secondaryLanguage) {
         const translations = getAnnouncementTranslations(announcement, selectedAirline.secondaryLanguage);
@@ -200,6 +201,14 @@ export default function EnhancedAnnouncementsTab() {
         style: selectedAirline?.accent === "British" ? 0.3 : 0.1,
         use_speaker_boost: true
       });
+
+      toast({
+        title: "Playing Announcement",
+        description: `${announcement.title} with ${voiceToUse.name}`,
+      });
+
+      // Update voice index for next announcement
+      setCurrentVoiceIndex(prevIndex => (prevIndex + 1) % voices.length);
 
       // Reset playing state when audio ends
       setTimeout(() => {
@@ -256,9 +265,14 @@ export default function EnhancedAnnouncementsTab() {
               <p className="text-text-muted">
                 Professional cabin announcements with realistic voice synthesis
               </p>
+              {voices.length > 0 && (
+                <p className="text-xs text-text-muted mt-1">
+                  Next voice: {voices[currentVoiceIndex % voices.length]?.name || 'Loading...'}
+                </p>
+              )}
             </div>
           </div>
-          
+
           {currentAudio && (
             <Button 
               onClick={stopSpeech}
@@ -283,7 +297,7 @@ export default function EnhancedAnnouncementsTab() {
                 className="w-64 bg-panel-bg border-panel-gray"
               />
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Filter size={16} className="text-text-muted" />
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -360,7 +374,7 @@ export default function EnhancedAnnouncementsTab() {
           <AnimatePresence>
             {filteredAnnouncements.map((announcement, index) => {
               const isPlaying = playingId === announcement.id;
-              
+
               return (
                 <motion.div
                   key={announcement.id}
@@ -399,7 +413,7 @@ export default function EnhancedAnnouncementsTab() {
                             </div>
                           </div>
                         </div>
-                        
+
                         <Button
                           variant="ghost"
                           size="sm"
@@ -416,14 +430,14 @@ export default function EnhancedAnnouncementsTab() {
                         </Button>
                       </div>
                     </CardHeader>
-                    
+
                     <CardContent>
                       <CardDescription className="text-text-secondary mb-4 line-clamp-3">
                         {announcement.text}
                       </CardDescription>
-                      
+
                       <Separator className="mb-4" />
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex flex-wrap gap-1">
                           {announcement.phase.map(phase => (
@@ -436,7 +450,7 @@ export default function EnhancedAnnouncementsTab() {
                             </Badge>
                           ))}
                         </div>
-                        
+
                         <Button
                           onClick={() => handlePlayAnnouncement(announcement)}
                           disabled={isLoading}
@@ -498,7 +512,7 @@ export default function EnhancedAnnouncementsTab() {
               <HelpCircle className="text-aviation-blue" size={24} />
               <h3 className="text-xl font-semibold text-text-primary">Virtual Microphone Setup</h3>
             </div>
-            
+
             <Alert className="mb-4">
               <Mic className="h-4 w-4" />
               <AlertDescription className="text-text-secondary">
@@ -544,7 +558,7 @@ function getAnnouncementTranslations(announcement: Announcement, language: strin
     "safety-seatbelts": {
       "German": "Bitte stellen Sie sicher, dass Ihre Sicherheitsgurte fest angezogen sind und bleiben Sie angeschnallt, bis das Anschnallzeichen erlischt.",
       "French": "Veuillez vous assurer que vos ceintures de sécurité sont bien attachées et restez attachés jusqu'à ce que le signal de ceinture s'éteigne.",
-      "Spanish": "Por favor asegúrense de que sus cinturones de seguridad estén bien abrochados y permanezcan abrochados hasta que se apague la señal.",
+      "Spanish": "Por favor asegúrense de que sus cinturones de seguridad estén bien abrochados y permanezcan abrochados hasta que se apague la signal.",
       "Italian": "Vi preghiamo di assicurarvi che le cinture di sicurezza siano ben allacciate e rimanere allacciati fino allo spegnimento del segnale.",
       "Dutch": "Zorg ervoor dat uw veiligheidsgordels goed vastgemaakt zijn en blijf vastgegord tot het gordelteiken uitgaat.",
       "Swedish": "Var vänliga se till att era säkerhetsbälten är ordentligt fastspända och håll dem på tills bältestecknet släcks.",

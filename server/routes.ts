@@ -6,7 +6,11 @@ import { insertAnnouncementSchema, insertChecklistSchema, insertNoteSchema, inse
 import { atc24Client } from "./atc24-client";
 import { EnhancedAircraft } from "@shared/atc24-types";
 import { elevenLabsService } from "./elevenlabs";
-import { join } from "path";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export async function registerRoutes(app: Express): Promise<Server> {
 
