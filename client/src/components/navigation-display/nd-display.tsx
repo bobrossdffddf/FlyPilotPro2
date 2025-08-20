@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { EnhancedAircraft } from "@shared/atc24-types";
+import mapTestImage from "@assets/user-imports/maptest.svg";
 
 interface NDDisplayProps {
   selectedAircraft: EnhancedAircraft | null;
@@ -116,18 +117,41 @@ export default function NDDisplay({
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
-    // Draw map underlay if provided
-    if (mapOverlay && showTerrain) {
-      // Placeholder for map overlay - user can replace this
-      ctx.fillStyle = 'rgba(101, 67, 33, 0.3)'; // Brown terrain color
-      ctx.fillRect(100, 100, 600, 600);
+    // Draw map underlay with maptest image
+    if (showTerrain) {
+      // Create and load the map image
+      const mapImage = new Image();
+      mapImage.src = mapTestImage;
       
-      // Add text indicator for map overlay
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-      ctx.font = '16px Inter';
-      ctx.textAlign = 'center';
-      ctx.fillText('TERRAIN MAP OVERLAY', 400, 50);
-      ctx.fillText('(Replace with your terrain data)', 400, 70);
+      // Apply map if loaded
+      if (mapImage.complete) {
+        ctx.save();
+        
+        // Apply some transparency for overlay effect
+        ctx.globalAlpha = 0.7;
+        
+        // Scale and position the map to fit the ND display
+        const scale = 800 / Math.max(mapImage.width, mapImage.height);
+        const scaledWidth = mapImage.width * scale;
+        const scaledHeight = mapImage.height * scale;
+        const offsetX = (800 - scaledWidth) / 2;
+        const offsetY = (800 - scaledHeight) / 2;
+        
+        ctx.drawImage(mapImage, offsetX, offsetY, scaledWidth, scaledHeight);
+        
+        ctx.restore();
+        
+        // Map indicator
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.font = '12px JetBrains Mono';
+        ctx.textAlign = 'left';
+        ctx.fillText('MAP: MAPTEST', 10, 780);
+      } else {
+        // Fallback while loading
+        mapImage.onload = () => {
+          drawND(); // Redraw when image loads
+        };
+      }
     }
 
     // Draw range rings - A320 style with dotted outer rings
