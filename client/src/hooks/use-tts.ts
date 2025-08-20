@@ -57,7 +57,7 @@ export function useTTS() {
         
         setIsSupported(!!window.puter?.ai?.txt2speech);
         if (window.puter?.ai?.txt2speech) {
-          fetchVoices();
+          // Will fetch voices later
         }
       } catch (error) {
         console.error('Failed to load Puter.js:', error);
@@ -66,13 +66,13 @@ export function useTTS() {
         setIsSupported(browserTTSSupported);
         if (browserTTSSupported) {
           console.log('Falling back to browser TTS');
-          fetchVoices(); // Will handle browser TTS voices
+          // Will handle browser TTS voices in fetchVoices
         }
       }
     };
     
     loadPuter();
-  }, [fetchVoices]);
+  }, []);
 
   const fetchVoices = useCallback(async () => {
     // Check if we have Puter.js or need to use browser TTS
@@ -202,7 +202,7 @@ export function useTTS() {
       };
 
       // Generate speech using Puter.js
-      const audio = await window.puter.ai.txt2speech(options.text, ttsOptions);
+      const audio = await window.puter!.ai!.txt2speech(options.text, ttsOptions);
       
       setCurrentAudio(audio);
       

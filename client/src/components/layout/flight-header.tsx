@@ -24,7 +24,7 @@ export default function FlightHeader({ aircraft }: FlightHeaderProps) {
   };
 
   const handleDisconnect = () => {
-    sessionStorage.removeItem('selectedAircraft');
+    // Navigate back to flight selection
     setLocation('/');
   };
 
