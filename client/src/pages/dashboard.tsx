@@ -56,7 +56,7 @@ export default function Dashboard() {
       case "weight":
         return <EnhancedWeightBalanceTab />;
       case "instruments":
-        return <InstrumentsTab />;
+        return <InstrumentsTab selectedAircraft={selectedAircraft} />;
       case "help":
         return <HelpTab />;
       default:
