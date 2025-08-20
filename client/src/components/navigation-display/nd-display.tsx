@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { EnhancedAircraft } from "@shared/atc24-types";
-import mapTestImage from "@assets/user-imports/maptest.svg";
 
 interface NDDisplayProps {
   selectedAircraft: EnhancedAircraft | null;
@@ -119,9 +118,9 @@ export default function NDDisplay({
 
     // Draw map underlay with maptest image
     if (showTerrain) {
-      // Create and load the map image
+      // Create and load the map image from user-imports
       const mapImage = new Image();
-      mapImage.src = mapTestImage;
+      mapImage.src = '/user-imports/maptest.svg';
       
       // Apply map if loaded
       if (mapImage.complete) {

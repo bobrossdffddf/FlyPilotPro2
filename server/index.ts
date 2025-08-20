@@ -72,6 +72,9 @@ app.use((req, res, next) => {
 
   // Serve attached assets (charts, etc.)
   app.use('/attached_assets', express.static(join(__dirname, '../attached_assets')));
+  
+  // Serve user imports (maps, etc.)
+  app.use('/user-imports', express.static(join(__dirname, '../user-imports')));
 
 
   // importantly only setup vite in development and after
