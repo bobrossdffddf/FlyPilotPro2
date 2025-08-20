@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useTTS } from "@/hooks/use-tts";
 import { useToast } from "@/hooks/use-toast";
 import { airlineConfigs, detectAirlineFromCallsign, type AirlineVoiceConfig } from "@/data/airlines";
+import { EnhancedAircraft } from "@shared/atc24-types";
 import { 
   Volume2, 
   VolumeX, 
