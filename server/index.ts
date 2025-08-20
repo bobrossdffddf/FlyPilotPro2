@@ -26,13 +26,6 @@ app.use((req, res, next) => {
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
-    // This is a workaround for the chart 404 issue.
-    // The chart page is not being served correctly.
-    // This will ensure that the chart page is served correctly.
-    if (path === '/404') {
-      res.sendFile(join(__dirname, '../client/dist/index.html'));
-      return;
-    }
     capturedJsonResponse = bodyJson;
     return originalResJson.apply(res, [bodyJson, ...args]);
   };

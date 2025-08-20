@@ -79,14 +79,6 @@ export const notes = pgTable("notes", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const charts = pgTable("charts", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  title: text("title").notNull(),
-  airport: text("airport").notNull(),
-  type: text("type").notNull(), // approach, departure, airport
-  pdfUrl: text("pdf_url").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
 
 export const sids = pgTable("sids", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -124,10 +116,6 @@ export const insertNoteSchema = createInsertSchema(notes).omit({
   updatedAt: true,
 });
 
-export const insertChartSchema = createInsertSchema(charts).omit({
-  id: true,
-  createdAt: true,
-});
 
 export const insertSidSchema = createInsertSchema(sids).omit({
   id: true,
@@ -148,8 +136,6 @@ export type Checklist = typeof checklists.$inferSelect;
 export type InsertNote = z.infer<typeof insertNoteSchema>;
 export type Note = typeof notes.$inferSelect;
 
-export type InsertChart = z.infer<typeof insertChartSchema>;
-export type Chart = typeof charts.$inferSelect;
 
 export type InsertSid = z.infer<typeof insertSidSchema>;
 export type Sid = typeof sids.$inferSelect;

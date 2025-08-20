@@ -179,75 +179,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Charts routes
-  app.get("/api/charts", async (req, res) => {
-    try {
-      // Return real chart from attached assets
-      const charts = [
-        {
-          id: "1",
-          title: "IRFD Ground Chart",
-          airportCode: "IRFD",
-          chartType: "Ground Chart",
-          fileName: "IRFD_CHART_TYPE_GROUND.svg",
-          fileUrl: "/api/charts/IRFD_CHART_TYPE_GROUND.svg",
-          createdAt: new Date().toISOString()
-        }
-      ];
-
-      res.json(charts);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch charts" });
-    }
-  });
-
-  // Serve individual chart files with proper headers
-  app.get("/api/charts/:filename", (req, res) => {
-    const filename = req.params.filename;
-    const filePath = join(__dirname, '../attached_assets/charts/', filename);
-
-    // Set proper headers for SVG files
-    if (filename.endsWith('.svg')) {
-      res.setHeader('Content-Type', 'image/svg+xml');
-      res.setHeader('Cache-Control', 'public, max-age=31536000');
-    }
-
-    res.sendFile(filePath, (err) => {
-      if (err) {
-        res.status(404).json({ error: 'Chart not found' });
-      }
-    });
-  });
-
-
-  app.post("/api/charts", async (req, res) => {
-    try {
-      const { title, airportCode, chartType, fileName, fileUrl } = req.body;
-
-      const newChart = {
-        id: Date.now().toString(),
-        title,
-        airportCode,
-        chartType,
-        fileName,
-        fileUrl,
-        createdAt: new Date().toISOString()
-      };
-
-      res.status(201).json(newChart);
-    } catch (error) {
-      res.status(400).json({ message: "Invalid chart data" });
-    }
-  });
-
-  app.delete("/api/charts/:id", async (req, res) => {
-    try {
-      const { id } = req.params;
-      res.json({ success: true, deletedId: id });
-    } catch (error) {
-      res.status(500).json({ message: "Failed to delete chart" });
-    }
-  });
 
   // SIDs routes
   app.get("/api/sids", async (req, res) => {
@@ -324,7 +255,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       phase: "cruise",
       route: "KJFK-KLAX",
       wind: "270/15",
-      lastUpdate: new Date().toISOString(),
+      lastUpdate: new Date(),
       position: { x: -74.0060, y: 40.7128 },
       isOnGround: false
     },
@@ -341,7 +272,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       phase: "descent",
       route: "EDDF-EGLL",
       wind: "240/12",
-      lastUpdate: new Date().toISOString(),
+      lastUpdate: new Date(),
       position: { x: 13.4050, y: 52.5200 },
       isOnGround: false
     },
@@ -358,7 +289,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       phase: "approach",
       route: "EGLL-KJFK",
       wind: "260/18",
-      lastUpdate: new Date().toISOString(),
+      lastUpdate: new Date(),
       position: { x: -0.4543, y: 51.4700 },
       isOnGround: false
     }

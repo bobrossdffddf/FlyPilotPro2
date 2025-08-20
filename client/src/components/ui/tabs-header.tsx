@@ -12,7 +12,7 @@ import {
   HelpCircle
 } from "lucide-react";
 
-type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | "weight" | "instruments" | "help";
+type TabType = "announcements" | "sids" | "notepad" | "checklists" | "weight" | "instruments" | "help";
 
 interface TabsHeaderProps {
   activeTab: TabType;
@@ -25,12 +25,6 @@ const tabs = [
     label: "PA System",
     icon: Volume2,
     color: "text-aviation-blue"
-  },
-  {
-    id: "charts" as TabType,
-    label: "Charts",
-    icon: Map,
-    color: "text-nav-green"
   },
   {
     id: "sids" as TabType,

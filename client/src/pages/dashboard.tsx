@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 import EnhancedAnnouncementsTab from "@/components/tabs/enhanced-announcements-tab";
-import EnhancedChartsTab from "@/components/tabs/enhanced-charts-tab";
 import SidsTab from "@/components/tabs/sids-tab";
 import NotepadTab from "@/components/tabs/notepad-tab";
 import EnhancedChecklistsTab from "@/components/tabs/enhanced-checklists-tab";
@@ -17,7 +16,7 @@ import InstrumentsTab from "@/components/tabs/instruments-tab";
 import HelpTab from "@/components/tabs/help-tab"; // Assuming HelpTab is in this path
 import FlightHeader from "@/components/layout/flight-header";
 
-type TabType = "announcements" | "charts" | "sids" | "notepad" | "checklists" | "weight" | "instruments" | "help";
+type TabType = "announcements" | "sids" | "notepad" | "checklists" | "weight" | "instruments" | "help";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("announcements");
@@ -25,60 +24,29 @@ export default function Dashboard() {
   const [showAnnouncementDialog, setShowAnnouncementDialog] = useState(true);
   const [, setLocation] = useLocation();
 
-  // Check for selected aircraft from flight selection
+  // Set default aircraft (sessionStorage removed per user request)
   useEffect(() => {
-    const stored = sessionStorage.getItem('selectedAircraft');
-    if (stored) {
-      try {
-        const aircraft = JSON.parse(stored);
-        setSelectedAircraft(aircraft);
-      } catch (error) {
-        console.error('Failed to parse selected aircraft:', error);
-        // Create a default aircraft for testing
-        const defaultAircraft: EnhancedAircraft = {
-          callsign: "UAL123",
-          pilot: "Captain Smith",
-          aircraft: "Boeing 737-800",
-          altitude: 37000,
-          speed: 480,
-          groundSpeed: 480,
-          heading: 270,
-          position: { x: -74.1793, y: 40.6413 },
-          wind: "270@15",
-          isOnGround: false,
-          phase: "cruise",
-          lastUpdate: new Date()
-        };
-        setSelectedAircraft(defaultAircraft);
-        sessionStorage.setItem('selectedAircraft', JSON.stringify(defaultAircraft));
-      }
-    } else {
-      // Create a default aircraft for testing
-      const defaultAircraft: EnhancedAircraft = {
-        callsign: "UAL123",
-        pilot: "Captain Smith",
-        aircraft: "Boeing 737-800",
-        altitude: 37000,
-        speed: 480,
-        groundSpeed: 480,
-        heading: 270,
-        position: { x: -74.1793, y: 40.6413 },
-        wind: "270@15",
-        isOnGround: false,
-        phase: "cruise",
-        lastUpdate: new Date()
-      };
-      setSelectedAircraft(defaultAircraft);
-      sessionStorage.setItem('selectedAircraft', JSON.stringify(defaultAircraft));
-    }
+    const defaultAircraft: EnhancedAircraft = {
+      callsign: "UAL123",
+      pilot: "Captain Smith",
+      aircraft: "Boeing 737-800",
+      altitude: 37000,
+      speed: 480,
+      groundSpeed: 480,
+      heading: 270,
+      position: { x: -74.1793, y: 40.6413 },
+      wind: "270@15",
+      isOnGround: false,
+      phase: "cruise",
+      lastUpdate: new Date()
+    };
+    setSelectedAircraft(defaultAircraft);
   }, [setLocation]);
 
   const renderActiveTab = () => {
     switch (activeTab) {
       case "announcements":
         return <EnhancedAnnouncementsTab selectedAircraft={selectedAircraft} />;
-      case "charts":
-        return <EnhancedChartsTab />;
       case "sids":
         return <SidsTab />;
       case "notepad":

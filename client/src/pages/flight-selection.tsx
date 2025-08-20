@@ -54,8 +54,7 @@ export default function FlightSelection() {
     setSelectedAircraft(aircraftData);
     setIsTransitioning(true);
 
-    // Store selected aircraft in sessionStorage
-    sessionStorage.setItem('selectedAircraft', JSON.stringify(aircraftData));
+    // SessionStorage removed per user request
 
     // Cool transition animation before navigation
     await new Promise(resolve => setTimeout(resolve, 1500));
