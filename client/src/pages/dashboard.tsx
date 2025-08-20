@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useLocation } from "wouter";
+import { useLocation, useParams } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { EnhancedAircraft } from "@shared/atc24-types";
 import { TabsHeader } from "@/components/ui/tabs-header";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -23,25 +24,40 @@ export default function Dashboard() {
   const [selectedAircraft, setSelectedAircraft] = useState<EnhancedAircraft | null>(null);
   const [showAnnouncementDialog, setShowAnnouncementDialog] = useState(true);
   const [, setLocation] = useLocation();
+  const params = useParams<{ callsign?: string }>();
 
-  // Set default aircraft (sessionStorage removed per user request)
+  // Get all aircraft data for real-time updates
+  const { data: allAircraft = [] } = useQuery<EnhancedAircraft[]>({
+    queryKey: ["/api/aircraft"],
+    refetchInterval: 3000,
+  });
+
+  // Set selected aircraft based on URL parameter or default
   useEffect(() => {
-    const defaultAircraft: EnhancedAircraft = {
-      callsign: "UAL123",
-      pilot: "Captain Smith",
-      aircraft: "Boeing 737-800",
-      altitude: 37000,
-      speed: 480,
-      groundSpeed: 480,
-      heading: 270,
-      position: { x: -74.1793, y: 40.6413 },
-      wind: "270@15",
-      isOnGround: false,
-      phase: "cruise",
-      lastUpdate: new Date()
-    };
-    setSelectedAircraft(defaultAircraft);
-  }, [setLocation]);
+    if (params.callsign && allAircraft.length > 0) {
+      // Find the selected aircraft by callsign
+      const aircraft = allAircraft.find(a => a.callsign === decodeURIComponent(params.callsign!));
+      if (aircraft) {
+        setSelectedAircraft(aircraft);
+      } else {
+        // Aircraft not found, redirect to flight selection
+        setLocation('/');
+      }
+    } else if (!params.callsign && allAircraft.length > 0) {
+      // No callsign in URL, use first available aircraft or redirect to selection
+      setLocation('/');
+    }
+  }, [params.callsign, allAircraft, setLocation]);
+
+  // Update selected aircraft with real-time data
+  useEffect(() => {
+    if (selectedAircraft && allAircraft.length > 0) {
+      const updated = allAircraft.find(a => a.callsign === selectedAircraft.callsign);
+      if (updated) {
+        setSelectedAircraft(updated);
+      }
+    }
+  }, [allAircraft, selectedAircraft]);
 
   const renderActiveTab = () => {
     switch (activeTab) {

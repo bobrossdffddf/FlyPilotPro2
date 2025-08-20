@@ -54,11 +54,9 @@ export default function FlightSelection() {
     setSelectedAircraft(aircraftData);
     setIsTransitioning(true);
 
-    // SessionStorage removed per user request
-
     // Cool transition animation before navigation
     await new Promise(resolve => setTimeout(resolve, 1500));
-    setLocation('/dashboard');
+    setLocation(`/dashboard/${encodeURIComponent(aircraftData.callsign)}`);
   };
 
   const getPhaseColor = (phase: string) => {

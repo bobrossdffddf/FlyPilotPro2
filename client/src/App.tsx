@@ -12,7 +12,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={FlightSelection} />
-      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/dashboard/:callsign?" component={Dashboard} />
       <Route component={NotFound} />
     </Switch>
   );
