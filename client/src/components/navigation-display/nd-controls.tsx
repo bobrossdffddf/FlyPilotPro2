@@ -32,7 +32,7 @@ export default function NDControls({
 }: NDControlsProps) {
   const [uploadedMap, setUploadedMap] = useState<string | null>(null);
 
-  const ranges = [10, 20, 40, 80, 160, 320];
+  const ranges = [5, 8, 10, 20, 40, 80];
 
   const handleMapUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

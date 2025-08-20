@@ -40,7 +40,7 @@ export default function NDDisplay({
     refetchInterval: 1000, // Update every second for smooth radar
   });
 
-  // Convert ATC 24 coordinates to ND display coordinates
+  // Convert ATC 24 coordinates to ND display coordinates (aircraft-centered, heading-up)
   const convertToNDCoordinates = useCallback((aircraft: EnhancedAircraft, center: { x: number; y: number }) => {
     if (!selectedAircraft) return { x: 0, y: 0 };
 
@@ -51,13 +51,20 @@ export default function NDDisplay({
     const relativeX = (aircraft.position.x - center.x) / STUDS_PER_NMI;
     const relativeY = (aircraft.position.y - center.y) / STUDS_PER_NMI;
     
-    // Convert to screen coordinates (ND is 800x800px, range is in NMi)
+    // Convert to screen coordinates with aircraft centered
     const scale = 400 / range; // pixels per nautical mile
     
     // In ATC 24: -y is North, -x is West
-    // In ND display: +y is up (North), +x is right (East)
-    const screenX = 400 - (relativeX * scale); // Center + convert West-negative to East-positive
-    const screenY = 400 + (relativeY * scale); // Center + convert North-negative to South-positive
+    // Rotate coordinates based on selected aircraft heading for heading-up display
+    const headingRad = (selectedAircraft.heading - 90) * Math.PI / 180; // Convert to radians, 0° = North
+    
+    // Apply rotation matrix for heading-up display
+    const rotatedX = relativeX * Math.cos(-headingRad) - relativeY * Math.sin(-headingRad);
+    const rotatedY = relativeX * Math.sin(-headingRad) + relativeY * Math.cos(-headingRad);
+    
+    // Convert to screen coordinates (center aircraft at 400, 400)
+    const screenX = 400 - (rotatedX * scale);
+    const screenY = 400 + (rotatedY * scale);
     
     return { x: screenX, y: screenY };
   }, [range, selectedAircraft]);
@@ -224,18 +231,39 @@ export default function NDDisplay({
       drawAircraftSymbol(ctx, aircraft);
     });
 
-    // Draw heading line for selected aircraft
+    // Draw selected aircraft at center (always pointing up in heading-up mode)
     if (selectedAircraft) {
-      const headingAngle = (selectedAircraft.heading - 90) * Math.PI / 180;
-      ctx.strokeStyle = '#00ffbb';
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      
+      // Selected aircraft symbol (white triangle pointing up)
+      ctx.fillStyle = '#FFFFFF';
+      ctx.strokeStyle = '#000000';
       ctx.lineWidth = 3;
+      
+      // Black border
       ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(
-        centerX + Math.cos(headingAngle) * 100,
-        centerY + Math.sin(headingAngle) * 100
-      );
+      ctx.moveTo(0, -16);
+      ctx.lineTo(-12, 12);
+      ctx.lineTo(0, 8);
+      ctx.lineTo(12, 12);
+      ctx.closePath();
       ctx.stroke();
+      
+      // White fill
+      ctx.fillStyle = '#FFFFFF';
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, -16);
+      ctx.lineTo(-12, 12);
+      ctx.lineTo(0, 8);
+      ctx.lineTo(12, 12);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.restore();
     }
 
     // Draw wind arrow
@@ -248,61 +276,35 @@ export default function NDDisplay({
   const drawAircraftSymbol = (ctx: CanvasRenderingContext2D, aircraft: AircraftSymbol) => {
     const { x, y, heading, isSelected, phase } = aircraft;
     
-    // Skip if outside visible area
-    if (x < 0 || x > 800 || y < 0 || y > 800) return;
+    // Skip if outside visible area or if this is the selected aircraft (drawn at center)
+    if (x < 0 || x > 800 || y < 0 || y > 800 || isSelected) return;
 
     ctx.save();
     ctx.translate(x, y);
-    ctx.rotate((heading - 90) * Math.PI / 180); // Convert to radians
+    
+    // In heading-up mode, other aircraft rotate relative to selected aircraft's heading
+    const relativeHeading = heading - (selectedAircraft?.heading || 0);
+    ctx.rotate((relativeHeading - 90) * Math.PI / 180);
 
-    // Aircraft symbol color based on phase and selection
+    // Aircraft symbol color based on phase
     let color = '#00bbff'; // Default blue
-    if (isSelected) color = '#FFFFFF'; // White for selected (A320 style)
-    else if (phase === 'cruise') color = '#00bbff';
+    if (phase === 'cruise') color = '#00bbff';
     else if (phase === 'climb' || phase === 'descent') color = '#ffaa00';
     else if (phase === 'approach' || phase === 'landing') color = '#ff6600';
     else if (phase === 'taxi' || phase === 'takeoff') color = '#ffff00';
 
-    // Draw aircraft triangle - larger and more distinctive for selected
+    // Standard aircraft symbol
     ctx.fillStyle = color;
     ctx.strokeStyle = color;
-    
-    if (isSelected) {
-      // Draw larger selected aircraft with black border for contrast
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = '#000000';
-      ctx.beginPath();
-      ctx.moveTo(0, -16); // Nose
-      ctx.lineTo(-10, 10); // Left wing
-      ctx.lineTo(0, 6);    // Tail
-      ctx.lineTo(10, 10);  // Right wing
-      ctx.closePath();
-      ctx.stroke();
-      
-      // Draw main white symbol
-      ctx.fillStyle = color;
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(0, -16);
-      ctx.lineTo(-10, 10);
-      ctx.lineTo(0, 6);
-      ctx.lineTo(10, 10);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-    } else {
-      // Standard aircraft symbol
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(0, -12); // Nose
-      ctx.lineTo(-8, 8);  // Left wing
-      ctx.lineTo(0, 4);   // Tail
-      ctx.lineTo(8, 8);   // Right wing
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-    }
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, -12); // Nose
+    ctx.lineTo(-8, 8);  // Left wing
+    ctx.lineTo(0, 4);   // Tail
+    ctx.lineTo(8, 8);   // Right wing
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
 
     ctx.restore();
 
@@ -373,7 +375,16 @@ export default function NDDisplay({
         data-testid="nd-canvas"
       />
       
-      {/* Mode Display Only */}
+      {/* Heading Display at Top (A320 style) */}
+      {selectedAircraft && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-panel-bg/90 rounded-lg px-4 py-2 border border-panel-gray">
+          <div className="text-white font-mono text-2xl font-bold text-center">
+            {selectedAircraft.heading.toString().padStart(3, '0')}°
+          </div>
+        </div>
+      )}
+      
+      {/* Mode Display */}
       <div className="absolute top-4 left-4 bg-panel-bg/90 rounded-lg p-3 border border-panel-gray">
         <div className="text-aviation-blue font-mono text-lg font-bold">{mode}</div>
       </div>
