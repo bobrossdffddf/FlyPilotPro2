@@ -36,7 +36,7 @@ export function useTTS() {
   const [isSupported, setIsSupported] = useState(false);
   const { toast } = useToast();
 
-  // Initialize Puter.js TTS
+  // Initialize Puter.js TTS with fallback to browser TTS
   useEffect(() => {
     const loadPuter = async () => {
       try {
@@ -50,6 +50,8 @@ export function useTTS() {
           await new Promise((resolve, reject) => {
             script.onload = resolve;
             script.onerror = reject;
+            // Add timeout to prevent hanging
+            setTimeout(() => reject(new Error('Timeout loading Puter.js')), 10000);
           });
         }
         
@@ -59,16 +61,24 @@ export function useTTS() {
         }
       } catch (error) {
         console.error('Failed to load Puter.js:', error);
-        setIsSupported(false);
+        // Fallback to browser TTS if available
+        const browserTTSSupported = 'speechSynthesis' in window;
+        setIsSupported(browserTTSSupported);
+        if (browserTTSSupported) {
+          console.log('Falling back to browser TTS');
+          fetchVoices(); // Will handle browser TTS voices
+        }
       }
     };
     
     loadPuter();
-  }, []);
+  }, [fetchVoices]);
 
   const fetchVoices = useCallback(async () => {
-    // Puter.js provides predefined voices
-    const predefinedVoices: Voice[] = [
+    // Check if we have Puter.js or need to use browser TTS
+    if (window.puter?.ai?.txt2speech) {
+      // Puter.js provides predefined voices
+      const predefinedVoices: Voice[] = [
       // English voices
       { voice_id: 'en-US-female-standard', name: 'Sarah (Female, US)', category: 'attendant', lang: 'en-US', gender: 'female', quality: 'neural' },
       { voice_id: 'en-US-male-standard', name: 'David (Male, US)', category: 'captain', lang: 'en-US', gender: 'male', quality: 'neural' },
@@ -122,18 +132,48 @@ export function useTTS() {
       { voice_id: 'hi-IN-female-standard', name: 'Priya (Female, India)', category: 'attendant', lang: 'hi-IN', gender: 'female', quality: 'neural' },
       { voice_id: 'hi-IN-male-standard', name: 'Arjun (Male, India)', category: 'captain', lang: 'hi-IN', gender: 'male', quality: 'neural' }
     ];
-    
-    setVoices(predefinedVoices);
-    return predefinedVoices;
+      
+      setVoices(predefinedVoices);
+      return predefinedVoices;
+    } else {
+      // Fallback to browser TTS
+      const browserVoices = 'speechSynthesis' in window ? speechSynthesis.getVoices() : [];
+      const convertedVoices: Voice[] = browserVoices.map((voice, index) => ({
+        voice_id: `browser-${index}`,
+        name: voice.name,
+        category: voice.name.toLowerCase().includes('female') ? 'attendant' : 'captain',
+        lang: voice.lang,
+        gender: voice.name.toLowerCase().includes('female') ? 'female' : 'male',
+        quality: 'standard'
+      }));
+      
+      setVoices(convertedVoices);
+      return convertedVoices;
+    }
   }, []);
 
   const generateSpeech = useCallback(async (options: GenerateSpeechOptions) => {
-    if (!isSupported || !window.puter?.ai?.txt2speech) {
+    if (!isSupported) {
       toast({
         title: "TTS Not Available",
         description: "Text-to-speech service is loading or unavailable",
         variant: "destructive"
       });
+      return;
+    }
+    
+    // Try Puter.js first, then fallback to browser TTS
+    if (window.puter?.ai?.txt2speech) {
+      // Use Puter.js TTS
+      // ... existing Puter.js logic
+    } else if ('speechSynthesis' in window) {
+      // Fallback to browser TTS
+      const utterance = new SpeechSynthesisUtterance(options.text);
+      utterance.rate = parseFloat(options.rate || '1.0');
+      utterance.pitch = parseFloat(options.pitch || '1.0');
+      utterance.volume = parseFloat(options.volume || '1.0');
+      
+      speechSynthesis.speak(utterance);
       return;
     }
 

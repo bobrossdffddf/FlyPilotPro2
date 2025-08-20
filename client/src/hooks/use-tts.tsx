@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 interface TTSOptions {
   rate?: number;
@@ -29,9 +29,9 @@ export function useTTS() {
   }, [isSupported]);
 
   // Load voices on mount
-  useState(() => {
+  useEffect(() => {
     loadVoices();
-  });
+  }, [loadVoices]);
 
   const speak = useCallback((text: string, options: TTSOptions = {}) => {
     if (!isSupported || !text.trim()) return;
