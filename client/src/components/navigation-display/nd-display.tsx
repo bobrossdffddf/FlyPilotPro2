@@ -123,58 +123,101 @@ export default function NDDisplay({
       ctx.fillText('(Replace with your terrain data)', 400, 70);
     }
 
-    // Draw range rings
+    // Draw range rings - A320 style with dotted outer rings
     const centerX = 400;
     const centerY = 400;
-    const ringSpacing = 400 / range * 10; // 10 NMi rings
+    const ringSpacing = 400 / range * 5; // 5 NMi rings for better resolution
 
-    ctx.strokeStyle = 'rgba(0, 255, 187, 0.3)';
+    // Inner rings (solid)
+    ctx.strokeStyle = 'rgba(0, 255, 187, 0.4)';
     ctx.lineWidth = 1;
+    ctx.setLineDash([]);
     
-    for (let i = 1; i <= range / 10; i++) {
+    for (let i = 1; i <= 2; i++) {
       ctx.beginPath();
       ctx.arc(centerX, centerY, i * ringSpacing, 0, 2 * Math.PI);
       ctx.stroke();
-      
-      // Range labels
-      ctx.fillStyle = 'rgba(0, 255, 187, 0.7)';
-      ctx.font = '12px JetBrains Mono';
-      ctx.textAlign = 'center';
-      ctx.fillText(`${i * 10}`, centerX + i * ringSpacing - 5, centerY - 5);
     }
+    
+    // Outer rings (dotted)
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = 'rgba(0, 255, 187, 0.2)';
+    
+    for (let i = 3; i <= range / 5; i++) {
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, i * ringSpacing, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+    
+    ctx.setLineDash([]); // Reset line dash
 
-    // Draw compass rose
+    // Draw A320-style compass rose with more detail
     ctx.strokeStyle = 'rgba(0, 255, 187, 0.8)';
     ctx.lineWidth = 2;
     
-    // Cardinal directions
+    // Cardinal and intercardinal directions
     const directions = [
-      { angle: 0, label: 'N' },
-      { angle: 90, label: 'E' },
-      { angle: 180, label: 'S' },
-      { angle: 270, label: 'W' }
+      { angle: 0, label: 'N', major: true },
+      { angle: 45, label: '', major: false },
+      { angle: 90, label: 'E', major: true },
+      { angle: 135, label: '', major: false },
+      { angle: 180, label: 'S', major: true },
+      { angle: 225, label: '', major: false },
+      { angle: 270, label: 'W', major: true },
+      { angle: 315, label: '', major: false }
     ];
 
     directions.forEach(dir => {
-      const angle = (dir.angle - 90) * Math.PI / 180; // Convert to radians, adjust for 0° = North
-      const x1 = centerX + Math.cos(angle) * 350;
-      const y1 = centerY + Math.sin(angle) * 350;
-      const x2 = centerX + Math.cos(angle) * 370;
-      const y2 = centerY + Math.sin(angle) * 370;
+      const angle = (dir.angle - 90) * Math.PI / 180;
+      const innerRadius = dir.major ? 350 : 360;
+      const outerRadius = dir.major ? 375 : 370;
       
+      const x1 = centerX + Math.cos(angle) * innerRadius;
+      const y1 = centerY + Math.sin(angle) * innerRadius;
+      const x2 = centerX + Math.cos(angle) * outerRadius;
+      const y2 = centerY + Math.sin(angle) * outerRadius;
+      
+      ctx.lineWidth = dir.major ? 2 : 1;
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       ctx.stroke();
       
-      // Direction labels
-      ctx.fillStyle = 'rgba(0, 255, 187, 1)';
-      ctx.font = 'bold 14px Inter';
-      ctx.textAlign = 'center';
-      const labelX = centerX + Math.cos(angle) * 385;
-      const labelY = centerY + Math.sin(angle) * 385 + 5;
-      ctx.fillText(dir.label, labelX, labelY);
+      // Direction labels for major directions only
+      if (dir.major && dir.label) {
+        ctx.fillStyle = 'rgba(0, 255, 187, 1)';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'center';
+        const labelX = centerX + Math.cos(angle) * 390;
+        const labelY = centerY + Math.sin(angle) * 390 + 5;
+        ctx.fillText(dir.label, labelX, labelY);
+      }
     });
+    
+    // Add heading bug for selected aircraft
+    if (selectedAircraft) {
+      const headingAngle = (selectedAircraft.heading - 90) * Math.PI / 180;
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.lineWidth = 3;
+      
+      // Heading bug triangle
+      const bugX = centerX + Math.cos(headingAngle) * 375;
+      const bugY = centerY + Math.sin(headingAngle) * 375;
+      
+      ctx.save();
+      ctx.translate(bugX, bugY);
+      ctx.rotate(headingAngle + Math.PI / 2);
+      
+      ctx.beginPath();
+      ctx.moveTo(0, -8);
+      ctx.lineTo(-6, 6);
+      ctx.lineTo(6, 6);
+      ctx.closePath();
+      ctx.fill();
+      
+      ctx.restore();
+    }
 
     // Draw aircraft symbols
     aircraftSymbols.forEach(aircraft => {
@@ -214,25 +257,52 @@ export default function NDDisplay({
 
     // Aircraft symbol color based on phase and selection
     let color = '#00bbff'; // Default blue
-    if (isSelected) color = '#00ff00'; // Green for selected
+    if (isSelected) color = '#FFFFFF'; // White for selected (A320 style)
     else if (phase === 'cruise') color = '#00bbff';
     else if (phase === 'climb' || phase === 'descent') color = '#ffaa00';
     else if (phase === 'approach' || phase === 'landing') color = '#ff6600';
     else if (phase === 'taxi' || phase === 'takeoff') color = '#ffff00';
 
-    // Draw aircraft triangle
+    // Draw aircraft triangle - larger and more distinctive for selected
     ctx.fillStyle = color;
     ctx.strokeStyle = color;
-    ctx.lineWidth = isSelected ? 3 : 2;
     
-    ctx.beginPath();
-    ctx.moveTo(0, -12); // Nose
-    ctx.lineTo(-8, 8);  // Left wing
-    ctx.lineTo(0, 4);   // Tail
-    ctx.lineTo(8, 8);   // Right wing
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    if (isSelected) {
+      // Draw larger selected aircraft with black border for contrast
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = '#000000';
+      ctx.beginPath();
+      ctx.moveTo(0, -16); // Nose
+      ctx.lineTo(-10, 10); // Left wing
+      ctx.lineTo(0, 6);    // Tail
+      ctx.lineTo(10, 10);  // Right wing
+      ctx.closePath();
+      ctx.stroke();
+      
+      // Draw main white symbol
+      ctx.fillStyle = color;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, -16);
+      ctx.lineTo(-10, 10);
+      ctx.lineTo(0, 6);
+      ctx.lineTo(10, 10);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    } else {
+      // Standard aircraft symbol
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, -12); // Nose
+      ctx.lineTo(-8, 8);  // Left wing
+      ctx.lineTo(0, 4);   // Tail
+      ctx.lineTo(8, 8);   // Right wing
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
 
     ctx.restore();
 
@@ -303,10 +373,9 @@ export default function NDDisplay({
         data-testid="nd-canvas"
       />
       
-      {/* Mode and Range Display */}
+      {/* Mode Display Only */}
       <div className="absolute top-4 left-4 bg-panel-bg/90 rounded-lg p-3 border border-panel-gray">
         <div className="text-aviation-blue font-mono text-lg font-bold">{mode}</div>
-        <div className="text-text-primary font-mono text-sm">{range} NM</div>
       </div>
       
       {/* Selected Aircraft Info */}

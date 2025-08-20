@@ -9,7 +9,7 @@ interface InstrumentsTabProps {
 }
 
 export default function InstrumentsTab({ selectedAircraft }: InstrumentsTabProps) {
-  const [ndRange, setNdRange] = useState(40);
+  const [ndRange, setNdRange] = useState(17);
   const [ndMode, setNdMode] = useState<"NAV" | "ILS" | "VOR" | "ARC">("NAV");
   const [showWeather, setShowWeather] = useState(false);
   const [showTerrain, setShowTerrain] = useState(true);
